@@ -16,6 +16,10 @@ import java.util.Locale;
 public final class Config {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
+    public static final double RECOIL_CANCEL_MIN = 0.0D;
+    public static final double RECOIL_CANCEL_MAX = 100.0D;
+    public static final double WEAPON_STABILITY_MIN = 0.0D;
+    public static final double WEAPON_STABILITY_MAX = 100.0D;
     public static final double MAX_DISTANCE_MIN = 4.0D;
     public static final double MAX_DISTANCE_MAX = 300.0D;
     public static final int AIM_SUBSTEPS_MIN = 1;
@@ -157,6 +161,11 @@ public final class Config {
     public static final ForgeConfigSpec.BooleanValue INHERIT_SHOOTER_VELOCITY;
     public static final ForgeConfigSpec.IntValue LOCKED_RESCAN_INTERVAL;
     public static final ForgeConfigSpec.BooleanValue SHOW_BALLISTICS_HUD;
+    public static final ForgeConfigSpec.BooleanValue NO_RECOIL;
+    public static final ForgeConfigSpec.DoubleValue RECOIL_CANCEL_STRENGTH;
+    public static final ForgeConfigSpec.BooleanValue WEAPON_FEEL;
+    public static final ForgeConfigSpec.DoubleValue WEAPON_STABILITY;
+    public static final ForgeConfigSpec.BooleanValue KEEP_VANILLA_BOB;
     public static final ForgeConfigSpec CLIENT_SPEC;
 
     static {
@@ -292,6 +301,20 @@ public final class Config {
         SHOW_BALLISTICS_HUD = BUILDER.comment("Show active ballistic profile and solved time-of-flight.")
                 .define("show_ballistics_hud", true);
         BUILDER.pop();
+
+        BUILDER.comment("Client-side weapon feel and recoil control.").push("weapon_settings");
+        NO_RECOIL = BUILDER.comment("Cancel TACZ camera recoil so the muzzle does not climb while firing.")
+                .define("no_recoil", true);
+        RECOIL_CANCEL_STRENGTH = BUILDER.comment("How much of the recoil kick to cancel. 0 = vanilla, 100 = fully flat.")
+                .defineInRange("recoil_cancel_strength", 100.0D, RECOIL_CANCEL_MIN, RECOIL_CANCEL_MAX);
+        WEAPON_FEEL = BUILDER.comment("Stabilise the camera while firing so the crosshair stays where you put it.")
+                .define("weapon_feel", true);
+        WEAPON_STABILITY = BUILDER.comment("Camera stabilisation strength. 0 = off, 100 = rock solid.")
+                .defineInRange("weapon_stability", 85.0D, WEAPON_STABILITY_MIN, WEAPON_STABILITY_MAX);
+        KEEP_VANILLA_BOB = BUILDER.comment("Keep vanilla view bobbing while stabilising. Off locks the view completely.")
+                .define("keep_vanilla_bob", true);
+        BUILDER.pop();
+
         CLIENT_SPEC = BUILDER.build();
     }
 

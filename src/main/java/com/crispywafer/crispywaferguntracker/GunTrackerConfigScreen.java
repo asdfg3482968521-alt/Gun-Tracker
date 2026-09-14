@@ -28,7 +28,8 @@ public final class GunTrackerConfigScreen extends Screen {
         TARGET("crispywaferguntrackermod.config.page.target"),
         BALLISTICS("crispywaferguntrackermod.config.page.ballistics"),
         KEYS("crispywaferguntrackermod.config.page.keys"),
-        HUD("crispywaferguntrackermod.config.page.hud");
+        HUD("crispywaferguntrackermod.config.page.hud"),
+        WEAPON("crispywaferguntrackermod.config.page.weapon");
 
         private final String translationKey;
 
@@ -117,6 +118,7 @@ public final class GunTrackerConfigScreen extends Screen {
             case BALLISTICS -> buildBallisticsPage();
             case KEYS -> buildKeysPage();
             case HUD -> buildHudPage();
+            case WEAPON -> buildWeaponPage();
         }
 
         addRenderableWidget(Button.builder(Component.translatable("gui.done"), button -> saveAndClose())
@@ -280,6 +282,21 @@ public final class GunTrackerConfigScreen extends Screen {
         addIntSliderRow(15, "crispywaferguntrackermod.config.locked_rescan_interval",
                 Config.LOCKED_RESCAN_INTERVAL::get, Config.LOCKED_RESCAN_INTERVAL::set,
                 1, 10, "crispywaferguntrackermod.unit.ticks");
+    }
+
+    private void buildWeaponPage() {
+        addToggleRow(0, "crispywaferguntrackermod.config.no_recoil",
+                Config.NO_RECOIL::get, Config.NO_RECOIL::set);
+        addDoubleSliderRow(1, "crispywaferguntrackermod.config.recoil_cancel_strength",
+                Config.RECOIL_CANCEL_STRENGTH::get, Config.RECOIL_CANCEL_STRENGTH::set,
+                Config.RECOIL_CANCEL_MIN, Config.RECOIL_CANCEL_MAX, 0, null);
+        addToggleRow(2, "crispywaferguntrackermod.config.weapon_feel",
+                Config.WEAPON_FEEL::get, Config.WEAPON_FEEL::set);
+        addDoubleSliderRow(3, "crispywaferguntrackermod.config.weapon_stability",
+                Config.WEAPON_STABILITY::get, Config.WEAPON_STABILITY::set,
+                Config.WEAPON_STABILITY_MIN, Config.WEAPON_STABILITY_MAX, 0, null);
+        addToggleRow(4, "crispywaferguntrackermod.config.keep_vanilla_bob",
+                Config.KEEP_VANILLA_BOB::get, Config.KEEP_VANILLA_BOB::set);
     }
 
     private void buildKeysPage() {

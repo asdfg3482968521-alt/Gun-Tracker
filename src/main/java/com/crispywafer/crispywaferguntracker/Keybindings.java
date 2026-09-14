@@ -18,6 +18,10 @@ public final class Keybindings {
     public static KeyMapping triggerKey2;
     public static KeyMapping triggerKey3;
     public static KeyMapping triggerKey4;
+    /** 强制移动物品（Shift+左键的替代） */
+    public static KeyMapping forceMoveKey;
+    /** 一键整理：把同种可堆叠物品合并到一起 */
+    public static KeyMapping mergeKey;
 
     /** Compatibility aliases until AimHandler is migrated to the new activation controller. */
     @Deprecated public static KeyMapping toggleAimKey;
@@ -48,6 +52,12 @@ public final class Keybindings {
         triggerKey2 = unbound("key.crispywaferguntrackermod.trigger_2");
         triggerKey3 = unbound("key.crispywaferguntrackermod.trigger_3");
         triggerKey4 = unbound("key.crispywaferguntrackermod.trigger_4");
+        forceMoveKey = new KeyMapping(
+                "key.crispywaferguntrackermod.force_move",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_G,
+                "key.categories.crispywaferguntrackermod"
+        );
 
         event.register(openConfigKey);
         event.register(masterToggleKey);
@@ -55,6 +65,15 @@ public final class Keybindings {
         event.register(triggerKey2);
         event.register(triggerKey3);
         event.register(triggerKey4);
+        mergeKey = new KeyMapping(
+                "key.crispywaferguntrackermod.merge_stacks",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_Z,
+                "key.categories.crispywaferguntrackermod"
+        );
+
+        event.register(forceMoveKey);
+        event.register(mergeKey);
 
         toggleAimKey = openConfigKey;
         flickKey = triggerKey1;
