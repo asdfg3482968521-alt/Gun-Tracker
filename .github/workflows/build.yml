@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -30,6 +30,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '8.8'
+
+      - name: Apply Task 2 source patch
+        run: python .github/scripts/apply_task2.py
 
       - name: Build
         run: gradle clean build --stacktrace --no-daemon
