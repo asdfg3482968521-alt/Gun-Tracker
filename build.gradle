@@ -66,14 +66,26 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 17
 }
 
-tasks.register('logicTest', JavaExec) {
+tasks.register('activationLogicTest', JavaExec) {
     dependsOn testClasses
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.crispywafer.crispywaferguntracker.AimActivationControllerTestMain'
 }
 
+tasks.register('aimMathLogicTest', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.crispywafer.crispywaferguntracker.AimMathTestMain'
+}
+
+tasks.register('stableAimLogicTest', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.crispywafer.crispywaferguntracker.StableAimLogicTestMain'
+}
+
 tasks.named('check').configure {
-    dependsOn 'logicTest'
+    dependsOn 'activationLogicTest', 'aimMathLogicTest', 'stableAimLogicTest'
 }
 
 jar {
