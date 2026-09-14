@@ -1,5 +1,6 @@
 package com.crispywafer.crispywaferguntracker;
 
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -15,11 +16,10 @@ import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = CrispyWaferGunTrackerMod.MODID, value = Dist.CLIENT)
 public final class AimHandler {
-    private static boolean continuousAimActive;
-    private static boolean flicking;
-    private static boolean returning;
-    private static boolean recordedOriginal;
+    private static final AimActivationController ACTIVATION = new AimActivationController();
 
+    private static boolean previousActive;
+    private static boolean returning;
     private static float originalYaw;
     private static float originalPitch;
     private static float returnStartYaw;
@@ -42,9 +42,23 @@ public final class AimHandler {
             return;
         }
 
-        boolean togglePressed = Keybindings.toggleAimKey != null && Keybindings.toggleAimKey.consumeClick();
+        if (Keybindings.openConfigKey != null
+                && Keybindings.openConfigKey.consumeClick()
+                && mc.screen == null) {
+            resetAll();
+            mc.setScreen(new GunTrackerConfigScreen(null));
+            return;
+        }
+
+        if (mc.screen != null) {
+            resetAll();
+            return;
+        }
+
+        AimActivationController.SlotInput[] slots = collectTriggerInputs();
+
         if (!isStrictSingleplayer(mc)) {
-            if (togglePressed) {
+            if (anyClicked(slots)) {
                 player.displayClientMessage(
                         Component.translatable("message.crispywaferguntrackermod.singleplayer_only"),
                         true
@@ -54,68 +68,126 @@ public final class AimHandler {
             return;
         }
 
-        if (togglePressed) {
-            continuousAimActive = !continuousAimActive;
-            player.displayClientMessage(
-                    Component.translatable(continuousAimActive
-                            ? "message.crispywaferguntrackermod.aim_on"
-                            : "message.crispywaferguntrackermod.aim_off"),
-                    true
-            );
-            if (!continuousAimActive && !flicking && !returning) {
-                TargetSelector.INSTANCE.clearTarget();
-                currentTarget = null;
-            }
+        if (!Config.MASTER_ENABLED.get()) {
+            resetAll();
+            return;
         }
 
-        boolean flickDown = Keybindings.flickKey != null && Keybindings.flickKey.isDown();
-        if (continuousAimActive || flickDown || flicking) {
-            TaczBallistics.INSTANCE.tick(player);
-        }
-        if (flickDown && !flicking && !returning) {
-            flicking = true;
-            recordedOriginal = false;
-        }
+        boolean active = ACTIVATION.update(
+                true,
+                false,
+                System.currentTimeMillis(),
+                Config.LONG_PRESS_MS.get(),
+                slots
+        );
+        Config.AimBehavior behavior = Config.AIM_BEHAVIOR.get();
 
-        if (continuousAimActive && !flicking && !returning) {
-            updateTarget(player);
-            aimAtCurrentTarget(player, Config.CONTINUOUS_SPEED.get(), Config.INSTANT_CONTINUOUS.get());
-        }
-
-        if (flicking) {
-            if (!recordedOriginal) {
+        if (active && !previousActive) {
+            returning = false;
+            returnProgress = 0.0D;
+            if (behavior == Config.AimBehavior.FLICK_RETURN) {
                 originalYaw = player.getYRot();
                 originalPitch = player.getXRot();
-                recordedOriginal = true;
             }
-            updateTarget(player);
-            aimAtCurrentTarget(player, Config.FLICK_SPEED.get(), Config.FLICK_SPEED.get() >= 0.999D);
         }
 
-        if (!flickDown && flicking) {
-            returnStartYaw = player.getYRot();
-            returnStartPitch = player.getXRot();
-            returnProgress = 0.0D;
-            returning = true;
-            flicking = false;
-            recordedOriginal = false;
+        if (active) {
+            TaczBallistics.INSTANCE.tick(player);
+            updateTarget(player);
+            switch (behavior) {
+                case SMOOTH_TRACK -> aimAtCurrentTarget(
+                        player,
+                        Config.CONTINUOUS_SPEED.get(),
+                        false
+                );
+                case SNAP -> aimAtCurrentTarget(player, 1.0D, true);
+                case FLICK_RETURN -> aimAtCurrentTarget(
+                        player,
+                        Config.FLICK_SPEED.get(),
+                        Config.FLICK_SPEED.get() >= 0.999D
+                );
+            }
         }
+
+        if (!active && previousActive) {
+            if (shouldReturnAfterRelease(behavior)) {
+                beginReturn(player);
+            } else {
+                clearTarget();
+            }
+        }
+
+        previousActive = active;
 
         if (returning) {
-            double speed = Config.FLICK_RETURN_SPEED.get();
-            returnProgress = Math.min(1.0D, returnProgress + speed);
-            float newYaw = lerpAngle(returnStartYaw, originalYaw, (float) returnProgress);
-            float newPitch = (float) (returnStartPitch + (originalPitch - returnStartPitch) * returnProgress);
-            player.setYRot(newYaw);
-            player.setXRot(newPitch);
+            updateReturn(player);
+        }
+    }
 
-            if (returnProgress >= 1.0D) {
-                returning = false;
-                if (!continuousAimActive) {
-                    TargetSelector.INSTANCE.clearTarget();
-                    currentTarget = null;
-                }
+    private static AimActivationController.SlotInput[] collectTriggerInputs() {
+        AimActivationController.SlotInput[] slots = new AimActivationController.SlotInput[Keybindings.TRIGGER_SLOT_COUNT];
+        for (int i = 0; i < Keybindings.TRIGGER_SLOT_COUNT; i++) {
+            KeyMapping mapping = Keybindings.triggerKey(i);
+            boolean down = mapping != null && !mapping.isUnbound() && mapping.isDown();
+            boolean clicked = mapping != null && !mapping.isUnbound() && mapping.consumeClick();
+            if (clicked && duplicatesEarlierBinding(i, mapping)) {
+                clicked = false;
             }
+            slots[i] = new AimActivationController.SlotInput(down, clicked, triggerMode(i));
+        }
+        return slots;
+    }
+
+    private static boolean duplicatesEarlierBinding(int slot, KeyMapping mapping) {
+        if (mapping == null || mapping.isUnbound()) return false;
+        for (int i = 0; i < slot; i++) {
+            KeyMapping earlier = Keybindings.triggerKey(i);
+            if (earlier != null && !earlier.isUnbound() && mapping.getKey().equals(earlier.getKey())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static AimActivationController.TriggerMode triggerMode(int slot) {
+        return switch (slot) {
+            case 0 -> Config.TRIGGER_MODE_1.get();
+            case 1 -> Config.TRIGGER_MODE_2.get();
+            case 2 -> Config.TRIGGER_MODE_3.get();
+            case 3 -> Config.TRIGGER_MODE_4.get();
+            default -> throw new IndexOutOfBoundsException("trigger slot " + slot);
+        };
+    }
+
+    private static boolean anyClicked(AimActivationController.SlotInput[] slots) {
+        for (AimActivationController.SlotInput slot : slots) {
+            if (slot != null && slot.clicked()) return true;
+        }
+        return false;
+    }
+
+    static boolean shouldReturnAfterRelease(Config.AimBehavior behavior) {
+        return behavior == Config.AimBehavior.FLICK_RETURN;
+    }
+
+    private static void beginReturn(LocalPlayer player) {
+        returnStartYaw = player.getYRot();
+        returnStartPitch = player.getXRot();
+        returnProgress = 0.0D;
+        returning = true;
+    }
+
+    private static void updateReturn(LocalPlayer player) {
+        double speed = Config.FLICK_RETURN_SPEED.get();
+        returnProgress = Math.min(1.0D, returnProgress + speed);
+        float newYaw = lerpAngle(returnStartYaw, originalYaw, (float) returnProgress);
+        float newPitch = (float) (returnStartPitch + (originalPitch - returnStartPitch) * returnProgress);
+        player.setYRot(newYaw);
+        player.setXRot(newPitch);
+
+        if (returnProgress >= 1.0D) {
+            returning = false;
+            clearTarget();
         }
     }
 
@@ -180,7 +252,7 @@ public final class AimHandler {
     }
 
     static boolean isAimActive() {
-        return continuousAimActive || flicking;
+        return ACTIVATION.isActive();
     }
 
     @Nullable
@@ -188,11 +260,15 @@ public final class AimHandler {
         return currentTarget;
     }
 
+    private static void clearTarget() {
+        currentTarget = null;
+        TargetSelector.INSTANCE.clearTarget();
+    }
+
     private static void resetAll() {
-        continuousAimActive = false;
-        flicking = false;
+        ACTIVATION.reset();
+        previousActive = false;
         returning = false;
-        recordedOriginal = false;
         returnProgress = 0.0D;
         currentTarget = null;
         TargetSelector.INSTANCE.resetTracking();
