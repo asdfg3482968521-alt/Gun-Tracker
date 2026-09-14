@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/in-game-config-panel
+      - feature/stable-lock-target-filter-hud
   workflow_dispatch:
 
 permissions:
