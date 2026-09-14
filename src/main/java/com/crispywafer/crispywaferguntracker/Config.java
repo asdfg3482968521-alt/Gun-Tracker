@@ -16,6 +16,32 @@ import java.util.Locale;
 public final class Config {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
+    public static final double MAX_DISTANCE_MIN = 4.0D;
+    public static final double MAX_DISTANCE_MAX = 300.0D;
+    public static final int AIM_SUBSTEPS_MIN = 1;
+    public static final int AIM_SUBSTEPS_MAX = 32;
+    public static final double MAX_LEAD_TICKS_MIN = 1.0D;
+    public static final double MAX_LEAD_TICKS_MAX = 200.0D;
+    public static final double PROJECTILE_SPEED_MIN = 0.1D;
+    public static final double PROJECTILE_SPEED_MAX = 200.0D;
+    public static final double MAX_TRACKED_TARGET_SPEED_MIN = 0.5D;
+    public static final double MAX_TRACKED_TARGET_SPEED_MAX = 50.0D;
+    public static final double MAX_TARGET_ACCELERATION_MIN = 0.0D;
+    public static final double MAX_TARGET_ACCELERATION_MAX = 10.0D;
+    public static final int LONG_PRESS_MS_MIN = 50;
+    public static final int LONG_PRESS_MS_MAX = 2000;
+
+    public enum AimBehavior {
+        SMOOTH_TRACK,
+        SNAP,
+        FLICK_RETURN;
+
+        public AimBehavior next() {
+            AimBehavior[] values = values();
+            return values[(ordinal() + 1) % values.length];
+        }
+    }
+
     public enum TargetMode {
         HOSTILE_ONLY,
         MOBS_ONLY,
@@ -39,6 +65,13 @@ public final class Config {
         }
     }
 
+    public static final ForgeConfigSpec.BooleanValue MASTER_ENABLED;
+    public static final ForgeConfigSpec.EnumValue<AimBehavior> AIM_BEHAVIOR;
+    public static final ForgeConfigSpec.IntValue LONG_PRESS_MS;
+    public static final ForgeConfigSpec.EnumValue<AimActivationController.TriggerMode> TRIGGER_MODE_1;
+    public static final ForgeConfigSpec.EnumValue<AimActivationController.TriggerMode> TRIGGER_MODE_2;
+    public static final ForgeConfigSpec.EnumValue<AimActivationController.TriggerMode> TRIGGER_MODE_3;
+    public static final ForgeConfigSpec.EnumValue<AimActivationController.TriggerMode> TRIGGER_MODE_4;
     public static final ForgeConfigSpec.DoubleValue CONTINUOUS_SPEED;
     public static final ForgeConfigSpec.DoubleValue FLICK_SPEED;
     public static final ForgeConfigSpec.DoubleValue FLICK_RETURN_SPEED;
@@ -75,6 +108,20 @@ public final class Config {
 
     static {
         BUILDER.push("aim_settings");
+        MASTER_ENABLED = BUILDER.comment("Global master switch for all aim activation.")
+                .define("master_enabled", true);
+        AIM_BEHAVIOR = BUILDER.comment("Aim behavior shared by all trigger slots.")
+                .defineEnum("aim_behavior", AimBehavior.SMOOTH_TRACK);
+        LONG_PRESS_MS = BUILDER.comment("Long-hold activation threshold in milliseconds.")
+                .defineInRange("long_press_ms", 200, LONG_PRESS_MS_MIN, LONG_PRESS_MS_MAX);
+        TRIGGER_MODE_1 = BUILDER.comment("Activation mode for trigger slot 1.")
+                .defineEnum("trigger_mode_1", AimActivationController.TriggerMode.HOLD);
+        TRIGGER_MODE_2 = BUILDER.comment("Activation mode for trigger slot 2.")
+                .defineEnum("trigger_mode_2", AimActivationController.TriggerMode.TOGGLE);
+        TRIGGER_MODE_3 = BUILDER.comment("Activation mode for trigger slot 3.")
+                .defineEnum("trigger_mode_3", AimActivationController.TriggerMode.HOLD);
+        TRIGGER_MODE_4 = BUILDER.comment("Activation mode for trigger slot 4.")
+                .defineEnum("trigger_mode_4", AimActivationController.TriggerMode.HOLD);
         CONTINUOUS_SPEED = BUILDER.comment("Continuous tracking speed. 1.0 is maximum.")
                 .defineInRange("continuous_speed", 0.90D, 0.05D, 1.0D);
         FLICK_SPEED = BUILDER.comment("Flick speed. 1.0 snaps immediately.")
@@ -82,11 +129,11 @@ public final class Config {
         FLICK_RETURN_SPEED = BUILDER.comment("Return speed after releasing the flick key.")
                 .defineInRange("flick_return_speed", 0.65D, 0.05D, 1.0D);
         AIM_SUBSTEPS = BUILDER.comment("Smoothing substeps for non-instant tracking.")
-                .defineInRange("aim_substeps", 4, 1, 8);
+                .defineInRange("aim_substeps", 4, AIM_SUBSTEPS_MIN, AIM_SUBSTEPS_MAX);
         AIM_FOV_DEGREES = BUILDER.comment("Maximum angular error from the crosshair in degrees.")
                 .defineInRange("aim_fov_degrees", 70.0D, 5.0D, 180.0D);
         MAX_DISTANCE = BUILDER.comment("Maximum target search distance in blocks.")
-                .defineInRange("max_distance", 96.0D, 4.0D, 128.0D);
+                .defineInRange("max_distance", 96.0D, MAX_DISTANCE_MIN, MAX_DISTANCE_MAX);
         VISIBLE_ONLY = BUILDER.comment("Only lock targets with direct line of sight.")
                 .define("visible_only", true);
         INSTANT_CONTINUOUS = BUILDER.comment("Continuous aim snaps directly to the selected target.")
@@ -104,11 +151,11 @@ public final class Config {
         LEAD_ENABLED = BUILDER.comment("Predict moving targets using configured projectile speed.")
                 .define("lead_enabled", true);
         PROJECTILE_SPEED = BUILDER.comment("Manual fallback projectile speed in blocks per tick.")
-                .defineInRange("projectile_speed", 8.0D, 0.1D, 40.0D);
+                .defineInRange("projectile_speed", 8.0D, PROJECTILE_SPEED_MIN, PROJECTILE_SPEED_MAX);
         PROJECTILE_FRICTION = BUILDER.comment("Manual fallback TACZ-style friction per tick.")
                 .defineInRange("projectile_friction", 0.01D, 0.0D, 0.30D);
         MAX_LEAD_TICKS = BUILDER.comment("Maximum prediction window in game ticks.")
-                .defineInRange("max_lead_ticks", 30.0D, 1.0D, 40.0D);
+                .defineInRange("max_lead_ticks", 30.0D, MAX_LEAD_TICKS_MIN, MAX_LEAD_TICKS_MAX);
         GRAVITY_COMPENSATION = BUILDER.comment("Raise aim point to compensate for projectile drop.")
                 .define("gravity_compensation", false);
         PROJECTILE_GRAVITY = BUILDER.comment("Projectile downward acceleration in blocks/tick^2.")
@@ -130,9 +177,9 @@ public final class Config {
         TARGET_ACCELERATION_SMOOTHING = BUILDER.comment("EWMA strength for target acceleration.")
                 .defineInRange("target_acceleration_smoothing", 0.30D, 0.05D, 1.0D);
         MAX_TARGET_ACCELERATION = BUILDER.comment("Clamp for predicted target acceleration in blocks/tick^2.")
-                .defineInRange("max_target_acceleration", 0.35D, 0.0D, 2.0D);
+                .defineInRange("max_target_acceleration", 0.35D, MAX_TARGET_ACCELERATION_MIN, MAX_TARGET_ACCELERATION_MAX);
         MAX_TRACKED_TARGET_SPEED = BUILDER.comment("Clamp for tracked target speed to reject teleports/spikes.")
-                .defineInRange("max_tracked_target_speed", 4.0D, 0.5D, 20.0D);
+                .defineInRange("max_tracked_target_speed", 4.0D, MAX_TRACKED_TARGET_SPEED_MIN, MAX_TRACKED_TARGET_SPEED_MAX);
         INHERIT_SHOOTER_VELOCITY = BUILDER.comment("Model shooter velocity inherited by Minecraft projectiles.")
                 .define("inherit_shooter_velocity", true);
         LOCKED_RESCAN_INTERVAL = BUILDER.comment("Ticks between full candidate scans while a sticky target is valid.")
