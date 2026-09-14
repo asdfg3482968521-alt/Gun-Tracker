@@ -13,6 +13,7 @@ public final class Keybindings {
     public static final int TRIGGER_SLOT_COUNT = 4;
 
     public static KeyMapping openConfigKey;
+    public static KeyMapping masterToggleKey;
     public static KeyMapping triggerKey1;
     public static KeyMapping triggerKey2;
     public static KeyMapping triggerKey3;
@@ -32,6 +33,12 @@ public final class Keybindings {
                 GLFW.GLFW_KEY_RIGHT_ALT,
                 "key.categories.crispywaferguntrackermod"
         );
+        masterToggleKey = new KeyMapping(
+                "key.crispywaferguntrackermod.master_toggle",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_UNKNOWN,
+                "key.categories.crispywaferguntrackermod"
+        );
         triggerKey1 = new KeyMapping(
                 "key.crispywaferguntrackermod.trigger_1",
                 InputConstants.Type.MOUSE,
@@ -43,6 +50,7 @@ public final class Keybindings {
         triggerKey4 = unbound("key.crispywaferguntrackermod.trigger_4");
 
         event.register(openConfigKey);
+        event.register(masterToggleKey);
         event.register(triggerKey1);
         event.register(triggerKey2);
         event.register(triggerKey3);
