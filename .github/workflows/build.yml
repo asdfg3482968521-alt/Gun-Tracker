@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -30,9 +30,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '8.8'
-
-      - name: Apply Task 3 config patch
-        run: python .github/scripts/apply_task3_config.py
 
       - name: Build
         run: gradle clean build --stacktrace --no-daemon
