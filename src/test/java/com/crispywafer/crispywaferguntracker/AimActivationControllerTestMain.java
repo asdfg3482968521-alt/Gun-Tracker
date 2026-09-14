@@ -8,6 +8,7 @@ public final class AimActivationControllerTestMain {
         testMasterSwitchForcesOff();
         testScreenOpenForcesOffAndClearsTransientState();
         testDuplicateToggleClicksCountOnce();
+        testConfigRangeContracts();
         System.out.println("AimActivationController tests passed");
     }
 
@@ -86,11 +87,30 @@ public final class AimActivationControllerTestMain {
         assertTrue(c.update(true, false, 1000, 200, slots), "duplicate click signals must toggle only once");
     }
 
+    private static void testConfigRangeContracts() {
+        assertClose(300.0D, Config.MAX_DISTANCE_MAX, 0.0D, "distance max");
+        assertEquals(32, Config.AIM_SUBSTEPS_MAX, "substeps max");
+        assertClose(200.0D, Config.MAX_LEAD_TICKS_MAX, 0.0D, "lead max");
+        assertClose(200.0D, Config.PROJECTILE_SPEED_MAX, 0.0D, "projectile speed max");
+        assertClose(50.0D, Config.MAX_TRACKED_TARGET_SPEED_MAX, 0.0D, "tracked speed max");
+        assertClose(10.0D, Config.MAX_TARGET_ACCELERATION_MAX, 0.0D, "acceleration max");
+    }
+
     private static void assertTrue(boolean value, String message) {
         if (!value) throw new AssertionError(message);
     }
 
     private static void assertFalse(boolean value, String message) {
         if (value) throw new AssertionError(message);
+    }
+
+    private static void assertEquals(int expected, int actual, String message) {
+        if (expected != actual) throw new AssertionError(message + ": expected=" + expected + " actual=" + actual);
+    }
+
+    private static void assertClose(double expected, double actual, double eps, String message) {
+        if (Math.abs(expected - actual) > eps) {
+            throw new AssertionError(message + ": expected=" + expected + " actual=" + actual);
+        }
     }
 }
