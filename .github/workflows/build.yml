@@ -32,7 +32,7 @@ jobs:
           gradle-version: '8.8'
 
       - name: Apply Task 2 source patch
-        run: python .github/scripts/apply_task2.py
+        run: python .github/scripts/apply_task2_fixed.py
 
       - name: Build
         run: gradle clean build --stacktrace --no-daemon
