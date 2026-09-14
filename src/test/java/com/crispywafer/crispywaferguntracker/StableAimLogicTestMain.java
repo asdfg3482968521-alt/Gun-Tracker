@@ -7,6 +7,7 @@ public final class StableAimLogicTestMain {
         testWrappedAngleFilter();
         testTurnCaps();
         testStableTargetConfigContracts();
+        testAimModeConfigContracts();
         System.out.println("StableAimLogic tests passed");
     }
 
@@ -60,6 +61,22 @@ public final class StableAimLogicTestMain {
         assertTrue(Config.ANTI_BOT_MODE != null, "anti-bot config exists");
         assertTrue(Config.AntiBotMode.STANDARD != null, "standard anti-bot mode exists");
         assertTrue(Config.AntiBotMode.STRICT != null, "strict anti-bot mode exists");
+    }
+
+    private static void testAimModeConfigContracts() {
+        assertEquals(100, Config.VIEW_STABILITY_MAX, "view stability max");
+        assertTrue(Config.VIEW_STABILITY != null, "view stability config exists");
+        assertTrue(Config.SMOOTH_FOLLOW_GAIN != null, "smooth follow gain exists");
+        assertTrue(Config.SMOOTH_MAX_TURN != null, "smooth max turn exists");
+        assertTrue(Config.SNAP_FOLLOW_GAIN != null, "snap follow gain exists");
+        assertTrue(Config.SNAP_MAX_TURN != null, "snap max turn exists");
+        assertTrue(Config.FLICK_INITIAL_GAIN != null, "flick initial gain exists");
+        assertTrue(Config.FLICK_INITIAL_MAX_TURN != null, "flick initial max turn exists");
+        assertTrue(Config.FLICK_TRACK_GAIN != null, "flick tracking gain exists");
+        assertTrue(Config.FLICK_TRACK_MAX_TURN != null, "flick tracking max turn exists");
+        assertTrue(Config.RETURN_GAIN != null, "return gain exists");
+        assertTrue(Config.RETURN_MAX_TURN != null, "return max turn exists");
+        assertTrue(Keybindings.masterToggleKey == null, "master toggle key is unregistered during pure tests");
     }
 
     private static void assertTrue(boolean value, String message) {
