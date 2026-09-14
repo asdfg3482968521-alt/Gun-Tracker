@@ -604,8 +604,6 @@ public final class GunTrackerConfigScreen extends Screen {
     }
 
     private void saveAndClose() {
-
-    private void saveAndClose() {
         Config.CLIENT_SPEC.save();
         if (minecraft != null) {
             minecraft.options.save();
