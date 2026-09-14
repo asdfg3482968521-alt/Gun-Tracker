@@ -1,0 +1,68 @@
+package com.crispywafer.crispywaferguntracker;
+
+public final class StableAimLogicTestMain {
+    public static void main(String[] args) {
+        testStickinessMargin();
+        testCandidateConfirmation();
+        testWrappedAngleFilter();
+        testTurnCaps();
+        System.out.println("StableAimLogic tests passed");
+    }
+
+    private static void testStickinessMargin() {
+        assertClose(42.8D, TargetLockPolicy.switchMargin(85), 1.0e-9, "85 stickiness margin");
+        assertFalse(TargetLockPolicy.shouldChallenge(100.0D, 60.0D, 85),
+                "40-point lead is not enough at 85");
+        assertTrue(TargetLockPolicy.shouldChallenge(100.0D, 50.0D, 85),
+                "50-point lead is enough at 85");
+        assertClose(2.0D, TargetLockPolicy.switchMargin(0), 1.0e-9, "zero stickiness margin");
+        assertClose(50.0D, TargetLockPolicy.switchMargin(100), 1.0e-9, "max stickiness margin");
+    }
+
+    private static void testCandidateConfirmation() {
+        assertEquals(6, TargetLockPolicy.advanceConfirmation(true, true, 3, 3),
+                "same candidate accumulates elapsed ticks");
+        assertEquals(0, TargetLockPolicy.advanceConfirmation(true, false, 9, 3),
+                "lost advantage resets");
+        assertEquals(0, TargetLockPolicy.advanceConfirmation(false, true, 9, 3),
+                "different candidate resets before accumulating");
+        assertFalse(TargetLockPolicy.confirmed(11, 12), "11 ticks is not confirmed");
+        assertTrue(TargetLockPolicy.confirmed(12, 12), "12 ticks confirms");
+        assertTrue(TargetLockPolicy.confirmed(0, 0), "zero confirmation threshold confirms immediately");
+    }
+
+    private static void testWrappedAngleFilter() {
+        double filtered = AimViewMath.filterAngle(179.0D, -177.0D, 70);
+        assertClose(-179.8D, AimMath.normalizeDegrees(filtered), 0.25D,
+                "yaw filter must cross the short way around the wrap boundary");
+    }
+
+    private static void testTurnCaps() {
+        assertClose(10.0D, AimViewMath.stepAngle(0.0D, 90.0D, 1.0D, 10.0D), 1.0e-9,
+                "angle cap applies");
+        assertClose(-175.0D, AimMath.normalizeDegrees(AimViewMath.stepAngle(179.0D, -170.0D, 1.0D, 6.0D)),
+                1.0e-9, "wrapped turn uses short direction and cap");
+        assertClose(-8.0D, AimViewMath.stepLinear(0.0D, -30.0D, 1.0D, 8.0D), 1.0e-9,
+                "pitch cap applies");
+    }
+
+    private static void assertTrue(boolean value, String message) {
+        if (!value) throw new AssertionError(message);
+    }
+
+    private static void assertFalse(boolean value, String message) {
+        if (value) throw new AssertionError(message);
+    }
+
+    private static void assertEquals(int expected, int actual, String message) {
+        if (expected != actual) {
+            throw new AssertionError(message + ": expected=" + expected + " actual=" + actual);
+        }
+    }
+
+    private static void assertClose(double expected, double actual, double eps, String message) {
+        if (Math.abs(expected - actual) > eps) {
+            throw new AssertionError(message + ": expected=" + expected + " actual=" + actual);
+        }
+    }
+}
