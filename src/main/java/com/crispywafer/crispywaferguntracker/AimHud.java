@@ -10,10 +10,21 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Mod.EventBusSubscriber(modid = CrispyWaferGunTrackerMod.MODID, value = Dist.CLIENT)
 public final class AimHud {
+    static final int PADDING = 5;
+    static final int LINE_HEIGHT = 11;
+
+    record HudBounds(int left, int top, int right, int bottom) {
+        boolean contains(double x, double y) {
+            return x >= left && x <= right && y >= top && y <= bottom;
+        }
+    }
+
     private AimHud() {}
 
     @SubscribeEvent
@@ -29,77 +40,110 @@ public final class AimHud {
         int height = mc.getWindow().getGuiScaledHeight();
         int centerX = width / 2;
         int centerY = height / 2;
-
         LivingEntity target = AimHandler.getCurrentTarget();
-        boolean active = AimHandler.isAimActive();
         boolean masterEnabled = Config.MASTER_ENABLED.get();
 
         if (Config.SHOW_FOV_RING.get() && masterEnabled) {
             drawFovRing(graphics, mc, centerX, centerY, width, height, target != null);
         }
 
-        int ballisticY = centerY + 12;
         if (Config.SHOW_HUD.get()) {
-            Component status;
-            if (!masterEnabled) {
-                status = Component.translatable("hud.crispywaferguntrackermod.master_off");
-            } else if (!active) {
-                status = Component.translatable("hud.crispywaferguntrackermod.idle");
-            } else if (target == null) {
-                status = Component.translatable("hud.crispywaferguntrackermod.searching");
-            } else {
-                double distance = mc.player.distanceTo(target);
-                status = Component.translatable(
-                        "hud.crispywaferguntrackermod.locked",
-                        target.getDisplayName(),
-                        String.format(Locale.ROOT, "%.1f", distance)
-                );
-            }
-
-            int statusY = centerY + 12;
-            int textWidth = mc.font.width(status);
-            graphics.drawString(mc.font, status, centerX - textWidth / 2, statusY, 0xFFFFFFFF, true);
-
-            if (masterEnabled) {
-                Component mode = Component.translatable(
-                        "hud.crispywaferguntrackermod.mode",
-                        Component.translatable(modeTranslationKey(Config.AIM_BEHAVIOR.get()))
-                );
-                int modeWidth = mc.font.width(mode);
-                graphics.drawString(mc.font, mode, centerX - modeWidth / 2, statusY + 12, 0xFFD0D0D0, true);
-                ballisticY = statusY + 24;
-            } else {
-                ballisticY = statusY + 12;
-            }
+            int hudX = (int) Math.round(HudPositionMath.clampNormalized(Config.HUD_X_NORMALIZED.get()) * width);
+            int hudY = (int) Math.round(HudPositionMath.clampNormalized(Config.HUD_Y_NORMALIZED.get()) * height);
+            renderStatusBox(graphics, mc, hudX, hudY, false);
         }
 
-        if (Config.SHOW_BALLISTICS_HUD.get() && masterEnabled && active && target != null) {
-            BallisticProfile profile = TargetSelector.INSTANCE.getLastProfile();
-            BallisticsMath.Solution solution = TargetSelector.INSTANCE.getLastSolution();
-            if (profile != null) {
-                String sourceKey = switch (profile.source()) {
-                    case TACZ_LIVE -> "hud.crispywaferguntrackermod.source.tacz_live";
-                    case TACZ_DATA -> "hud.crispywaferguntrackermod.source.tacz_data";
-                    case MANUAL -> "hud.crispywaferguntrackermod.source.manual";
-                };
-                String tof = solution.valid()
-                        ? String.format(Locale.ROOT, "%.2f", solution.timeTicks())
-                        : "--";
-                Component ballistic = Component.translatable(
-                        "hud.crispywaferguntrackermod.ballistics",
-                        Component.translatable(sourceKey),
-                        String.format(Locale.ROOT, "%.2f", profile.speedBlocksPerTick()),
-                        String.format(Locale.ROOT, "%.3f", profile.gravityPerTick()),
-                        String.format(Locale.ROOT, "%.3f", profile.frictionPerTick()),
-                        tof
-                );
-                int ballisticWidth = mc.font.width(ballistic);
-                graphics.drawString(mc.font, ballistic, centerX - ballisticWidth / 2, ballisticY, 0xFFE0E0E0, true);
-            }
+        if (Config.SHOW_BALLISTICS_HUD.get() && masterEnabled && AimHandler.isAimActive() && target != null) {
+            drawBallistics(graphics, mc, centerX, centerY + 28);
         }
     }
 
-    private static String modeTranslationKey(Config.AimBehavior behavior) {
+    static HudBounds renderStatusBox(GuiGraphics graphics, Minecraft mc, int centerX, int centerY, boolean preview) {
+        List<Component> lines = statusLines(mc, preview);
+        if (lines.isEmpty()) return new HudBounds(centerX, centerY, centerX, centerY);
+
+        int contentWidth = 0;
+        for (Component line : lines) contentWidth = Math.max(contentWidth, mc.font.width(line));
+        int boxWidth = contentWidth + PADDING * 2;
+        int boxHeight = lines.size() * LINE_HEIGHT + PADDING * 2;
+
+        int screenWidth = mc.getWindow().getGuiScaledWidth();
+        int screenHeight = mc.getWindow().getGuiScaledHeight();
+        int left = Math.max(2, Math.min(screenWidth - boxWidth - 2, centerX - boxWidth / 2));
+        int top = Math.max(2, Math.min(screenHeight - boxHeight - 2, centerY - boxHeight / 2));
+        int right = left + boxWidth;
+        int bottom = top + boxHeight;
+
+        graphics.fill(left, top, right, bottom, 0xA0101010);
+        graphics.fill(left, top, right, top + 1, 0xCCB0B0B0);
+        graphics.fill(left, bottom - 1, right, bottom, 0xCC606060);
+
+        int y = top + PADDING;
+        for (Component line : lines) {
+            graphics.drawString(mc.font, line, left + PADDING, y, 0xFFFFFFFF, true);
+            y += LINE_HEIGHT;
+        }
+        return new HudBounds(left, top, right, bottom);
+    }
+
+    private static List<Component> statusLines(Minecraft mc, boolean preview) {
+        List<Component> lines = new ArrayList<>();
+        boolean masterEnabled = Config.MASTER_ENABLED.get();
+        LivingEntity target = AimHandler.getCurrentTarget();
+
+        if (Config.HUD_SHOW_MASTER.get()) {
+            lines.add(Component.translatable(
+                    "hud.crispywaferguntrackermod.master_state",
+                    Component.translatable(masterEnabled
+                            ? "crispywaferguntrackermod.config.on"
+                            : "crispywaferguntrackermod.config.off")
+            ));
+        }
+        if (Config.HUD_SHOW_MODE.get()) {
+            lines.add(Component.translatable(
+                    "hud.crispywaferguntrackermod.mode",
+                    Component.translatable(modeTranslationKey(Config.AIM_BEHAVIOR.get()))
+            ));
+        }
+        if (Config.HUD_SHOW_TARGET_NAME.get()) {
+            Component name = target != null
+                    ? target.getDisplayName()
+                    : (preview ? Component.literal("Steve") : Component.translatable("hud.crispywaferguntrackermod.no_target"));
+            lines.add(Component.translatable("hud.crispywaferguntrackermod.target", name));
+        }
+        if (Config.HUD_SHOW_TARGET_DISTANCE.get()) {
+            String distance = target != null && mc.player != null
+                    ? String.format(Locale.ROOT, "%.1f", mc.player.distanceTo(target))
+                    : (preview ? "23.6" : "--");
+            lines.add(Component.translatable("hud.crispywaferguntrackermod.distance", distance));
+        }
+        return lines;
+    }
+
+    private static void drawBallistics(GuiGraphics graphics, Minecraft mc, int centerX, int y) {
+        BallisticProfile profile = TargetSelector.INSTANCE.getLastProfile();
+        BallisticsMath.Solution solution = TargetSelector.INSTANCE.getLastSolution();
+        if (profile == null) return;
+
+        String sourceKey = switch (profile.source()) {
+            case TACZ_LIVE -> "hud.crispywaferguntrackermod.source.tacz_live";
+            case TACZ_DATA -> "hud.crispywaferguntrackermod.source.tacz_data";
+            case MANUAL -> "hud.crispywaferguntrackermod.source.manual";
+        };
+        String tof = solution.valid() ? String.format(Locale.ROOT, "%.2f", solution.timeTicks()) : "--";
+        Component ballistic = Component.translatable(
+                "hud.crispywaferguntrackermod.ballistics",
+                Component.translatable(sourceKey),
+                String.format(Locale.ROOT, "%.2f", profile.speedBlocksPerTick()),
+                String.format(Locale.ROOT, "%.3f", profile.gravityPerTick()),
+                String.format(Locale.ROOT, "%.3f", profile.frictionPerTick()),
+                tof
+        );
+        int ballisticWidth = mc.font.width(ballistic);
+        graphics.drawString(mc.font, ballistic, centerX - ballisticWidth / 2, y, 0xFFE0E0E0, true);
+    }
+
+    static String modeTranslationKey(Config.AimBehavior behavior) {
         return switch (behavior) {
             case SMOOTH_TRACK -> "hud.crispywaferguntrackermod.mode.smooth_track";
             case SNAP -> "hud.crispywaferguntrackermod.mode.snap";
@@ -119,9 +163,7 @@ public final class AimHud {
         double cameraFov = Math.max(30.0D, mc.options.fov().get());
         double aimFov = Config.AIM_FOV_DEGREES.get();
         double ratio = Math.min(1.0D, aimFov / cameraFov);
-        int radius = (int) Math.round(Math.min(width, height) * 0.46D * ratio);
-        radius = Math.max(8, radius);
-
+        int radius = Math.max(8, (int) Math.round(Math.min(width, height) * 0.46D * ratio));
         int color = hasTarget ? 0xFF55FF55 : 0xAAFFFFFF;
         int segments = 96;
         for (int i = 0; i < segments; i++) {

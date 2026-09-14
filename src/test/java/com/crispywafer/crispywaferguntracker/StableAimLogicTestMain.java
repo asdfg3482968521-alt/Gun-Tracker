@@ -84,6 +84,12 @@ public final class StableAimLogicTestMain {
         assertClose(0.0D, HudPositionMath.clampNormalized(-0.5D), 0.0D, "hud min clamp");
         assertClose(1.0D, HudPositionMath.clampNormalized(1.5D), 0.0D, "hud max clamp");
         assertClose(0.37D, HudPositionMath.clampNormalized(0.37D), 0.0D, "hud unchanged");
+        assertTrue(Config.HUD_SHOW_MASTER != null, "hud master-line toggle exists");
+        assertTrue(Config.HUD_SHOW_MODE != null, "hud mode-line toggle exists");
+        assertTrue(Config.HUD_SHOW_TARGET_NAME != null, "hud target-name toggle exists");
+        assertTrue(Config.HUD_SHOW_TARGET_DISTANCE != null, "hud distance toggle exists");
+        assertTrue(Config.HUD_X_NORMALIZED != null, "hud x position config exists");
+        assertTrue(Config.HUD_Y_NORMALIZED != null, "hud y position config exists");
     }
 
     private static void assertTrue(boolean value, String message) {

@@ -292,10 +292,31 @@ public final class GunTrackerConfigScreen extends Screen {
     private void buildHudPage() {
         addToggleRow(0, "crispywaferguntrackermod.config.show_hud",
                 Config.SHOW_HUD::get, Config.SHOW_HUD::set);
-        addToggleRow(1, "crispywaferguntrackermod.config.show_fov_ring",
+        addToggleRow(1, "crispywaferguntrackermod.config.hud_show_master",
+                Config.HUD_SHOW_MASTER::get, Config.HUD_SHOW_MASTER::set);
+        addToggleRow(2, "crispywaferguntrackermod.config.hud_show_mode",
+                Config.HUD_SHOW_MODE::get, Config.HUD_SHOW_MODE::set);
+        addToggleRow(3, "crispywaferguntrackermod.config.hud_show_target_name",
+                Config.HUD_SHOW_TARGET_NAME::get, Config.HUD_SHOW_TARGET_NAME::set);
+        addToggleRow(4, "crispywaferguntrackermod.config.hud_show_target_distance",
+                Config.HUD_SHOW_TARGET_DISTANCE::get, Config.HUD_SHOW_TARGET_DISTANCE::set);
+        addToggleRow(5, "crispywaferguntrackermod.config.show_fov_ring",
                 Config.SHOW_FOV_RING::get, Config.SHOW_FOV_RING::set);
-        addToggleRow(2, "crispywaferguntrackermod.config.show_ballistics_hud",
+        addToggleRow(6, "crispywaferguntrackermod.config.show_ballistics_hud",
                 Config.SHOW_BALLISTICS_HUD::get, Config.SHOW_BALLISTICS_HUD::set);
+        if (isRowVisible(7)) {
+            addRenderableWidget(Button.builder(Component.translatable("crispywaferguntrackermod.config.hud_adjust_position"), button -> {
+                Config.CLIENT_SPEC.save();
+                if (minecraft != null) minecraft.setScreen(new HudPositionScreen(this));
+            }).bounds(contentLeft, rowY(7), contentWidth(), 20).build());
+        }
+        if (isRowVisible(8)) {
+            addRenderableWidget(Button.builder(Component.translatable("crispywaferguntrackermod.config.hud_reset_position"), button -> {
+                Config.HUD_X_NORMALIZED.set(0.50D);
+                Config.HUD_Y_NORMALIZED.set(0.62D);
+                Config.CLIENT_SPEC.save();
+            }).bounds(contentLeft, rowY(8), contentWidth(), 20).build());
+        }
     }
 
     private void addMasterBindingRow(int row) {
@@ -526,7 +547,7 @@ public final class GunTrackerConfigScreen extends Screen {
             case TARGET -> 15;
             case BALLISTICS -> 16;
             case KEYS -> 5;
-            case HUD -> 3;
+            case HUD -> 9;
         };
     }
 

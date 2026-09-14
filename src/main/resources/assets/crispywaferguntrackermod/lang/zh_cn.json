@@ -117,5 +117,17 @@
   "crispywaferguntrackermod.config.switch_confirm_ticks": "切换确认时间",
   "crispywaferguntrackermod.config.invisible_tolerance_ticks": "不可见容忍时间",
   "crispywaferguntrackermod.config.candidate_scan_interval": "候选扫描间隔",
-  "crispywaferguntrackermod.unit.degree_per_tick": "度/刻"
+  "crispywaferguntrackermod.unit.degree_per_tick": "度/刻",
+  "crispywaferguntrackermod.config.hud_show_master": "显示自瞄总开关状态",
+  "crispywaferguntrackermod.config.hud_show_mode": "显示当前自瞄模式",
+  "crispywaferguntrackermod.config.hud_show_target_name": "显示锁定目标名称",
+  "crispywaferguntrackermod.config.hud_show_target_distance": "显示锁定目标距离",
+  "crispywaferguntrackermod.config.hud_adjust_position": "调整 HUD 位置",
+  "crispywaferguntrackermod.config.hud_reset_position": "恢复 HUD 默认位置",
+  "crispywaferguntrackermod.hud_position.title": "调整自瞄状态框位置",
+  "crispywaferguntrackermod.hud_position.instruction": "按住状态框并拖动；完成保存，Esc 取消",
+  "hud.crispywaferguntrackermod.master_state": "自瞄：%s",
+  "hud.crispywaferguntrackermod.target": "目标：%s",
+  "hud.crispywaferguntrackermod.distance": "距离：%s 方块",
+  "hud.crispywaferguntrackermod.no_target": "无"
 }

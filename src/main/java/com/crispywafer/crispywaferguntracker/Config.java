@@ -139,6 +139,12 @@ public final class Config {
     public static final ForgeConfigSpec.BooleanValue GRAVITY_COMPENSATION;
     public static final ForgeConfigSpec.DoubleValue PROJECTILE_GRAVITY;
     public static final ForgeConfigSpec.BooleanValue SHOW_HUD;
+    public static final ForgeConfigSpec.BooleanValue HUD_SHOW_MASTER;
+    public static final ForgeConfigSpec.BooleanValue HUD_SHOW_MODE;
+    public static final ForgeConfigSpec.BooleanValue HUD_SHOW_TARGET_NAME;
+    public static final ForgeConfigSpec.BooleanValue HUD_SHOW_TARGET_DISTANCE;
+    public static final ForgeConfigSpec.DoubleValue HUD_X_NORMALIZED;
+    public static final ForgeConfigSpec.DoubleValue HUD_Y_NORMALIZED;
     public static final ForgeConfigSpec.BooleanValue SHOW_FOV_RING;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_BALLISTICS;
     public static final ForgeConfigSpec.BooleanValue TACZ_AUTO_BALLISTICS;
@@ -247,8 +253,20 @@ public final class Config {
                 .define("gravity_compensation", false);
         PROJECTILE_GRAVITY = BUILDER.comment("Projectile downward acceleration in blocks/tick^2.")
                 .defineInRange("projectile_gravity", 0.05D, 0.0D, 0.20D);
-        SHOW_HUD = BUILDER.comment("Show current lock status and target near the crosshair.")
+        SHOW_HUD = BUILDER.comment("Show the persistent movable aim status box.")
                 .define("show_hud", true);
+        HUD_SHOW_MASTER = BUILDER.comment("Show master aim enabled/disabled state in the status box.")
+                .define("hud_show_master", true);
+        HUD_SHOW_MODE = BUILDER.comment("Show current aim behavior in the status box.")
+                .define("hud_show_mode", true);
+        HUD_SHOW_TARGET_NAME = BUILDER.comment("Show locked target name in the status box.")
+                .define("hud_show_target_name", true);
+        HUD_SHOW_TARGET_DISTANCE = BUILDER.comment("Show locked target distance in the status box.")
+                .define("hud_show_target_distance", true);
+        HUD_X_NORMALIZED = BUILDER.comment("Normalized horizontal center position of the status box.")
+                .defineInRange("hud_x_normalized", 0.50D, 0.0D, 1.0D);
+        HUD_Y_NORMALIZED = BUILDER.comment("Normalized vertical center position of the status box.")
+                .defineInRange("hud_y_normalized", 0.62D, 0.0D, 1.0D);
         SHOW_FOV_RING = BUILDER.comment("Draw an approximate FOV ring around the crosshair.")
                 .define("show_fov_ring", true);
         ADVANCED_BALLISTICS = BUILDER.comment("Use iterative TACZ-style drag/gravity intercept solving.")

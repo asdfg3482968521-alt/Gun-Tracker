@@ -117,5 +117,17 @@
   "crispywaferguntrackermod.config.switch_confirm_ticks": "Switch Confirmation Time",
   "crispywaferguntrackermod.config.invisible_tolerance_ticks": "Invisible Tolerance",
   "crispywaferguntrackermod.config.candidate_scan_interval": "Candidate Scan Interval",
-  "crispywaferguntrackermod.unit.degree_per_tick": "deg/tick"
+  "crispywaferguntrackermod.unit.degree_per_tick": "deg/tick",
+  "crispywaferguntrackermod.config.hud_show_master": "Show Aim Master State",
+  "crispywaferguntrackermod.config.hud_show_mode": "Show Current Aim Mode",
+  "crispywaferguntrackermod.config.hud_show_target_name": "Show Locked Target Name",
+  "crispywaferguntrackermod.config.hud_show_target_distance": "Show Locked Target Distance",
+  "crispywaferguntrackermod.config.hud_adjust_position": "Adjust HUD Position",
+  "crispywaferguntrackermod.config.hud_reset_position": "Reset HUD Position",
+  "crispywaferguntrackermod.hud_position.title": "Adjust Aim Status HUD",
+  "crispywaferguntrackermod.hud_position.instruction": "Drag the status box; Done saves, Esc cancels",
+  "hud.crispywaferguntrackermod.master_state": "Aim: %s",
+  "hud.crispywaferguntrackermod.target": "Target: %s",
+  "hud.crispywaferguntrackermod.distance": "Distance: %s blocks",
+  "hud.crispywaferguntrackermod.no_target": "None"
 }
