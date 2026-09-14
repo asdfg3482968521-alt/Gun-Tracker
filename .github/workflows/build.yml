@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/in-game-config-panel
   workflow_dispatch:
 
 permissions:

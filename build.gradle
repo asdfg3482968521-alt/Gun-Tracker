@@ -66,6 +66,16 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 17
 }
 
+tasks.register('logicTest', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.crispywafer.crispywaferguntracker.AimActivationControllerTestMain'
+}
+
+tasks.named('check').configure {
+    dependsOn 'logicTest'
+}
+
 jar {
     manifest {
         attributes([
