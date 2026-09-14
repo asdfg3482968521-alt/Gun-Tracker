@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[47,48)"
+license="MIT"
+
+[[mods]]
+modId="crispywaferguntrackermod"
+version="${file.jarVersion}"
+displayName="CrispyWafer Gun Tracker - Singleplayer Enhanced"
+description='''
+Singleplayer-only client aim tracker for Minecraft Forge 1.20.1.
+Adds TACZ-aware live ballistic calibration, iterative drag/gravity interception, motion filtering, FOV targeting, stable target switching and Simplified Chinese UI.
+'''
+authors="Sodium_CrispyWafer; singleplayer enhancement"
+displayTest="IGNORE_SERVER_VERSION"
+
+[[dependencies.crispywaferguntrackermod]]
+modId="forge"
+mandatory=true
+versionRange="[47,48)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.crispywaferguntrackermod]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="CLIENT"
