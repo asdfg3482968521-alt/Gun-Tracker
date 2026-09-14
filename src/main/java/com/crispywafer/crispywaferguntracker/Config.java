@@ -30,6 +30,16 @@ public final class Config {
     public static final double MAX_TARGET_ACCELERATION_MAX = 10.0D;
     public static final int LONG_PRESS_MS_MIN = 50;
     public static final int LONG_PRESS_MS_MAX = 2000;
+    public static final int STICKINESS_MIN = 0;
+    public static final int STICKINESS_MAX = 100;
+    public static final int SWITCH_CONFIRM_TICKS_MIN = 0;
+    public static final int SWITCH_CONFIRM_TICKS_MAX = 60;
+    public static final int CANDIDATE_SCAN_INTERVAL_MIN = 1;
+    public static final int CANDIDATE_SCAN_INTERVAL_MAX = 10;
+    public static final int INVISIBLE_TOLERANCE_TICKS_MIN = 0;
+    public static final int INVISIBLE_TOLERANCE_TICKS_MAX = 60;
+    public static final double UNLOCK_FOV_MIN = 5.0D;
+    public static final double UNLOCK_FOV_MAX = 180.0D;
 
     public enum AimBehavior {
         SMOOTH_TRACK,
@@ -65,6 +75,17 @@ public final class Config {
         }
     }
 
+    public enum AntiBotMode {
+        OFF,
+        STANDARD,
+        STRICT;
+
+        public AntiBotMode next() {
+            AntiBotMode[] values = values();
+            return values[(ordinal() + 1) % values.length];
+        }
+    }
+
     public static final ForgeConfigSpec.BooleanValue MASTER_ENABLED;
     public static final ForgeConfigSpec.EnumValue<AimBehavior> AIM_BEHAVIOR;
     public static final ForgeConfigSpec.IntValue LONG_PRESS_MS;
@@ -78,7 +99,16 @@ public final class Config {
     public static final ForgeConfigSpec.IntValue AIM_SUBSTEPS;
     public static final ForgeConfigSpec.DoubleValue AIM_FOV_DEGREES;
     public static final ForgeConfigSpec.DoubleValue MAX_DISTANCE;
+    public static final ForgeConfigSpec.DoubleValue UNLOCK_FOV_DEGREES;
     public static final ForgeConfigSpec.BooleanValue VISIBLE_ONLY;
+    public static final ForgeConfigSpec.BooleanValue TARGET_PLAYERS;
+    public static final ForgeConfigSpec.BooleanValue TARGET_HOSTILES;
+    public static final ForgeConfigSpec.BooleanValue TARGET_OTHERS;
+    public static final ForgeConfigSpec.EnumValue<AntiBotMode> ANTI_BOT_MODE;
+    public static final ForgeConfigSpec.IntValue STICKINESS;
+    public static final ForgeConfigSpec.IntValue SWITCH_CONFIRM_TICKS;
+    public static final ForgeConfigSpec.IntValue CANDIDATE_SCAN_INTERVAL;
+    public static final ForgeConfigSpec.IntValue INVISIBLE_TOLERANCE_TICKS;
     public static final ForgeConfigSpec.BooleanValue INSTANT_CONTINUOUS;
     public static final ForgeConfigSpec.BooleanValue STICKY_TARGET;
     public static final ForgeConfigSpec.DoubleValue SWITCH_HYSTERESIS;
@@ -134,8 +164,26 @@ public final class Config {
                 .defineInRange("aim_fov_degrees", 70.0D, 5.0D, 180.0D);
         MAX_DISTANCE = BUILDER.comment("Maximum target search distance in blocks.")
                 .defineInRange("max_distance", 96.0D, MAX_DISTANCE_MIN, MAX_DISTANCE_MAX);
-        VISIBLE_ONLY = BUILDER.comment("Only lock targets with direct line of sight.")
+        UNLOCK_FOV_DEGREES = BUILDER.comment("Wider angular radius used to retain an already locked target.")
+                .defineInRange("unlock_fov_degrees", 110.0D, UNLOCK_FOV_MIN, UNLOCK_FOV_MAX);
+        VISIBLE_ONLY = BUILDER.comment("Only acquire targets with direct line of sight; locked targets get a short tolerance.")
                 .define("visible_only", true);
+        TARGET_PLAYERS = BUILDER.comment("Allow player entities as aim targets.")
+                .define("target_players", true);
+        TARGET_HOSTILES = BUILDER.comment("Allow hostile Monster entities as aim targets.")
+                .define("target_hostiles", true);
+        TARGET_OTHERS = BUILDER.comment("Allow other living entities such as animals and villagers.")
+                .define("target_others", false);
+        ANTI_BOT_MODE = BUILDER.comment("Player dummy/NPC filtering mode.")
+                .defineEnum("anti_bot_mode", AntiBotMode.STANDARD);
+        STICKINESS = BUILDER.comment("Sticky target strength from 0 to 100.")
+                .defineInRange("stickiness", 85, STICKINESS_MIN, STICKINESS_MAX);
+        SWITCH_CONFIRM_TICKS = BUILDER.comment("How long a better candidate must remain better before switching.")
+                .defineInRange("switch_confirm_ticks", 12, SWITCH_CONFIRM_TICKS_MIN, SWITCH_CONFIRM_TICKS_MAX);
+        CANDIDATE_SCAN_INTERVAL = BUILDER.comment("Ticks between replacement-candidate scans while locked.")
+                .defineInRange("candidate_scan_interval", 3, CANDIDATE_SCAN_INTERVAL_MIN, CANDIDATE_SCAN_INTERVAL_MAX);
+        INVISIBLE_TOLERANCE_TICKS = BUILDER.comment("Ticks an existing lock may remain invisible before dropping.")
+                .defineInRange("invisible_tolerance_ticks", 10, INVISIBLE_TOLERANCE_TICKS_MIN, INVISIBLE_TOLERANCE_TICKS_MAX);
         INSTANT_CONTINUOUS = BUILDER.comment("Continuous aim snaps directly to the selected target.")
                 .define("instant_continuous", true);
         STICKY_TARGET = BUILDER.comment("Keep current target unless a meaningfully better candidate appears.")

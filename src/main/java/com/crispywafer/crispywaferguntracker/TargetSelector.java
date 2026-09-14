@@ -1,13 +1,17 @@
 package com.crispywafer.crispywaferguntracker;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 /** Selects and predicts a stable target inside the configured crosshair FOV. */
 public final class TargetSelector {
@@ -17,7 +21,11 @@ public final class TargetSelector {
 
     @Nullable
     private LivingEntity target;
-    private int lastFullScanTick = Integer.MIN_VALUE;
+    @Nullable
+    private LivingEntity candidateTarget;
+    private int candidateTicks;
+    private int invisibleTicks;
+    private int lastCandidateScanTick = Integer.MIN_VALUE;
     private BallisticProfile lastProfile;
     private BallisticsMath.Solution lastSolution = BallisticsMath.Solution.invalid();
 
@@ -29,74 +37,173 @@ public final class TargetSelector {
             return;
         }
 
-        boolean currentValid = target != null && isValidTarget(player, target);
-        if (currentValid && Config.STICKY_TARGET.get()) {
-            int interval = Math.max(1, Config.LOCKED_RESCAN_INTERVAL.get());
-            if (player.tickCount - lastFullScanTick < interval) {
-                return;
-            }
+        if (target == null) {
+            acquireBestTarget(player);
+            return;
         }
-        lastFullScanTick = player.tickCount;
 
+        if (!isRetainedTarget(player, target)) {
+            clearTarget();
+            acquireBestTarget(player);
+            return;
+        }
+
+        int interval = Math.max(Config.CANDIDATE_SCAN_INTERVAL_MIN, Config.CANDIDATE_SCAN_INTERVAL.get());
+        if (lastCandidateScanTick != Integer.MIN_VALUE
+                && player.tickCount - lastCandidateScanTick < interval) {
+            return;
+        }
+
+        int elapsed = lastCandidateScanTick == Integer.MIN_VALUE
+                ? interval
+                : Math.max(1, player.tickCount - lastCandidateScanTick);
+        lastCandidateScanTick = player.tickCount;
+
+        LivingEntity best = findBestAcquisitionTarget(player, target);
+        if (best == null) {
+            resetCandidate();
+            return;
+        }
+
+        double currentScore = scoreTarget(player, target);
+        double candidateScore = scoreTarget(player, best);
+        boolean better = TargetLockPolicy.shouldChallenge(
+                currentScore, candidateScore, Config.STICKINESS.get());
+        if (!better) {
+            resetCandidate();
+            return;
+        }
+
+        if (candidateTarget != best) {
+            candidateTarget = best;
+            candidateTicks = Math.max(1, elapsed);
+        } else {
+            candidateTicks = TargetLockPolicy.advanceConfirmation(
+                    true, true, candidateTicks, elapsed);
+        }
+
+        if (TargetLockPolicy.confirmed(candidateTicks, Config.SWITCH_CONFIRM_TICKS.get())) {
+            target = candidateTarget;
+            resetCandidate();
+            invisibleTicks = 0;
+            lastSolution = BallisticsMath.Solution.invalid();
+        }
+    }
+
+    private void acquireBestTarget(Player player) {
+        int interval = Math.max(Config.CANDIDATE_SCAN_INTERVAL_MIN, Config.CANDIDATE_SCAN_INTERVAL.get());
+        if (lastCandidateScanTick != Integer.MIN_VALUE
+                && player.tickCount - lastCandidateScanTick < interval) {
+            return;
+        }
+        lastCandidateScanTick = player.tickCount;
+        LivingEntity best = findBestAcquisitionTarget(player, null);
+        if (best != null) {
+            target = best;
+            invisibleTicks = 0;
+            resetCandidate();
+            lastSolution = BallisticsMath.Solution.invalid();
+        }
+    }
+
+    @Nullable
+    private LivingEntity findBestAcquisitionTarget(Player player, @Nullable LivingEntity excluded) {
         double maxDistance = Config.MAX_DISTANCE.get();
         List<LivingEntity> entities = player.level().getEntitiesOfClass(
-                LivingEntity.class,
-                player.getBoundingBox().inflate(maxDistance)
-        );
+                LivingEntity.class, player.getBoundingBox().inflate(maxDistance));
 
         LivingEntity best = null;
         double bestScore = Double.POSITIVE_INFINITY;
         for (LivingEntity entity : entities) {
-            if (!isValidTarget(player, entity)) continue;
-            double score = scoreTarget(player, entity, entity == target);
+            if (entity == excluded || !isAcquisitionTarget(player, entity)) continue;
+            double score = scoreTarget(player, entity);
             if (score < bestScore) {
                 best = entity;
                 bestScore = score;
             }
         }
-
-        if (currentValid && Config.STICKY_TARGET.get()) {
-            if (best == null || best == target) return;
-
-            double currentScore = scoreTarget(player, target, true);
-            if (!AimMath.shouldSwitchTarget(currentScore, bestScore, Config.SWITCH_HYSTERESIS.get())) {
-                return;
-            }
-        }
-
-        target = best;
-        lastSolution = BallisticsMath.Solution.invalid();
+        return best;
     }
 
     public boolean isValidTarget(Player player, @Nullable LivingEntity entity) {
-        if (player == null || entity == null || entity == player) return false;
-        if (!entity.isAlive() || entity.isRemoved()) return false;
+        return isAcquisitionTarget(player, entity);
+    }
 
-        double maxDistance = Config.MAX_DISTANCE.get();
-        if (player.distanceToSqr(entity) > maxDistance * maxDistance) return false;
-        if (!matchesTargetMode(entity)) return false;
-
-        // FOV is cheap; do it before the relatively expensive ray trace.
+    private boolean isAcquisitionTarget(Player player, @Nullable LivingEntity entity) {
+        if (!isBaseTarget(player, entity)) return false;
         double angle = angularErrorDegrees(player, entity);
         if (!AimMath.isWithinFov(angle, Config.AIM_FOV_DEGREES.get())) return false;
         return !Config.VISIBLE_ONLY.get() || player.hasLineOfSight(entity);
     }
 
-    private boolean matchesTargetMode(LivingEntity entity) {
-        Config.TargetMode mode = Config.TARGET_MODE.get();
-        return switch (mode) {
-            case HOSTILE_ONLY -> entity instanceof Monster;
-            case MOBS_ONLY -> !(entity instanceof Player);
-            case ALL_LIVING -> true;
-        };
+    private boolean isRetainedTarget(Player player, @Nullable LivingEntity entity) {
+        if (!isBaseTarget(player, entity)) return false;
+        double unlockFov = Math.max(Config.AIM_FOV_DEGREES.get(), Config.UNLOCK_FOV_DEGREES.get());
+        if (!AimMath.isWithinFov(angularErrorDegrees(player, entity), unlockFov)) return false;
+
+        if (!Config.VISIBLE_ONLY.get()) {
+            invisibleTicks = 0;
+            return true;
+        }
+        if (player.hasLineOfSight(entity)) {
+            invisibleTicks = 0;
+            return true;
+        }
+        invisibleTicks++;
+        return invisibleTicks <= Config.INVISIBLE_TOLERANCE_TICKS.get();
     }
 
-    private double scoreTarget(Player player, LivingEntity entity, boolean current) {
+    private boolean isBaseTarget(Player player, @Nullable LivingEntity entity) {
+        if (player == null || entity == null || entity == player) return false;
+        if (entity instanceof ArmorStand) return false;
+        if (!entity.isAlive() || entity.isRemoved()) return false;
+        double maxDistance = Config.MAX_DISTANCE.get();
+        if (player.distanceToSqr(entity) > maxDistance * maxDistance) return false;
+        return matchesEnabledCategory(entity) && passesAntiBot(entity);
+    }
+
+    private boolean matchesEnabledCategory(LivingEntity entity) {
+        if (entity instanceof Player) return Config.TARGET_PLAYERS.get();
+        if (entity instanceof Monster) return Config.TARGET_HOSTILES.get();
+        return Config.TARGET_OTHERS.get();
+    }
+
+    private boolean passesAntiBot(LivingEntity entity) {
+        if (!(entity instanceof Player playerEntity)) return true;
+        Config.AntiBotMode mode = Config.ANTI_BOT_MODE.get();
+        if (mode == Config.AntiBotMode.OFF) return true;
+
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.getConnection() == null) return false;
+        PlayerInfo info = minecraft.getConnection().getPlayerInfo(playerEntity.getUUID());
+        if (info == null) return false;
+        if (mode == Config.AntiBotMode.STANDARD) return true;
+
+        UUID uuid = playerEntity.getUUID();
+        if (uuid == null || (uuid.getMostSignificantBits() == 0L && uuid.getLeastSignificantBits() == 0L)) {
+            return false;
+        }
+        if (info.getProfile() == null || info.getProfile().getId() == null
+                || !uuid.equals(info.getProfile().getId())) {
+            return false;
+        }
+
+        int softAnomalies = 0;
+        String entityName = playerEntity.getGameProfile().getName();
+        String infoName = info.getProfile().getName();
+        if (entityName == null || !entityName.matches("[A-Za-z0-9_]{1,16}")) softAnomalies++;
+        if (infoName == null || !infoName.equals(entityName)) softAnomalies++;
+        if (playerEntity.getGameProfile().getId() == null
+                || !uuid.equals(playerEntity.getGameProfile().getId())) softAnomalies++;
+        return softAnomalies < 2;
+    }
+
+    private double scoreTarget(Player player, LivingEntity entity) {
         double angle = angularErrorDegrees(player, entity);
         double distance = Math.sqrt(player.distanceToSqr(entity));
         boolean approaching = isApproachingPlayer(player, entity);
         boolean recentlyHurt = entity.hurtTime > 0;
-        return AimMath.targetScore(angle, distance, approaching, recentlyHurt, current);
+        return AimMath.targetScore(angle, distance, approaching, recentlyHurt, false);
     }
 
     private boolean isApproachingPlayer(Player player, LivingEntity entity) {
@@ -104,6 +211,11 @@ public final class TargetSelector {
         if (velocity.lengthSqr() < 1.0e-6) return false;
         Vec3 towardPlayer = player.position().subtract(entity.position());
         return towardPlayer.lengthSqr() > 1.0e-6 && velocity.dot(towardPlayer) > 0.0;
+    }
+
+    private void resetCandidate() {
+        candidateTarget = null;
+        candidateTicks = 0;
     }
 
     public double angularErrorDegrees(Player player, LivingEntity entity) {
@@ -207,13 +319,16 @@ public final class TargetSelector {
 
     public void clearTarget() {
         target = null;
+        candidateTarget = null;
+        candidateTicks = 0;
+        invisibleTicks = 0;
+        lastCandidateScanTick = Integer.MIN_VALUE;
         lastSolution = BallisticsMath.Solution.invalid();
     }
 
     public void resetTracking() {
         clearTarget();
         motionTracker.clear();
-        lastFullScanTick = Integer.MIN_VALUE;
         lastProfile = null;
     }
 
