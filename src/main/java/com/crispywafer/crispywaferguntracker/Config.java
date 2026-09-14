@@ -40,6 +40,12 @@ public final class Config {
     public static final int INVISIBLE_TOLERANCE_TICKS_MAX = 60;
     public static final double UNLOCK_FOV_MIN = 5.0D;
     public static final double UNLOCK_FOV_MAX = 180.0D;
+    public static final int VIEW_STABILITY_MIN = 0;
+    public static final int VIEW_STABILITY_MAX = 100;
+    public static final double AIM_GAIN_MIN = 0.05D;
+    public static final double AIM_GAIN_MAX = 1.0D;
+    public static final double AIM_MAX_TURN_MIN = 1.0D;
+    public static final double AIM_MAX_TURN_MAX = 90.0D;
 
     public enum AimBehavior {
         SMOOTH_TRACK,
@@ -93,6 +99,17 @@ public final class Config {
     public static final ForgeConfigSpec.EnumValue<AimActivationController.TriggerMode> TRIGGER_MODE_2;
     public static final ForgeConfigSpec.EnumValue<AimActivationController.TriggerMode> TRIGGER_MODE_3;
     public static final ForgeConfigSpec.EnumValue<AimActivationController.TriggerMode> TRIGGER_MODE_4;
+    public static final ForgeConfigSpec.IntValue VIEW_STABILITY;
+    public static final ForgeConfigSpec.DoubleValue SMOOTH_FOLLOW_GAIN;
+    public static final ForgeConfigSpec.DoubleValue SMOOTH_MAX_TURN;
+    public static final ForgeConfigSpec.DoubleValue SNAP_FOLLOW_GAIN;
+    public static final ForgeConfigSpec.DoubleValue SNAP_MAX_TURN;
+    public static final ForgeConfigSpec.DoubleValue FLICK_INITIAL_GAIN;
+    public static final ForgeConfigSpec.DoubleValue FLICK_INITIAL_MAX_TURN;
+    public static final ForgeConfigSpec.DoubleValue FLICK_TRACK_GAIN;
+    public static final ForgeConfigSpec.DoubleValue FLICK_TRACK_MAX_TURN;
+    public static final ForgeConfigSpec.DoubleValue RETURN_GAIN;
+    public static final ForgeConfigSpec.DoubleValue RETURN_MAX_TURN;
     public static final ForgeConfigSpec.DoubleValue CONTINUOUS_SPEED;
     public static final ForgeConfigSpec.DoubleValue FLICK_SPEED;
     public static final ForgeConfigSpec.DoubleValue FLICK_RETURN_SPEED;
@@ -152,7 +169,29 @@ public final class Config {
                 .defineEnum("trigger_mode_3", AimActivationController.TriggerMode.HOLD);
         TRIGGER_MODE_4 = BUILDER.comment("Activation mode for trigger slot 4.")
                 .defineEnum("trigger_mode_4", AimActivationController.TriggerMode.HOLD);
-        CONTINUOUS_SPEED = BUILDER.comment("Continuous tracking speed. 1.0 is maximum.")
+        VIEW_STABILITY = BUILDER.comment("Cross-tick target angle stability from 0 to 100.")
+                .defineInRange("view_stability", 70, VIEW_STABILITY_MIN, VIEW_STABILITY_MAX);
+        SMOOTH_FOLLOW_GAIN = BUILDER.comment("Smooth-track follow gain per tick.")
+                .defineInRange("smooth_follow_gain", 0.28D, AIM_GAIN_MIN, AIM_GAIN_MAX);
+        SMOOTH_MAX_TURN = BUILDER.comment("Smooth-track maximum turn in degrees per tick.")
+                .defineInRange("smooth_max_turn", 10.0D, AIM_MAX_TURN_MIN, AIM_MAX_TURN_MAX);
+        SNAP_FOLLOW_GAIN = BUILDER.comment("Follow gain after SNAP's one-time acquisition snap.")
+                .defineInRange("snap_follow_gain", 0.55D, AIM_GAIN_MIN, AIM_GAIN_MAX);
+        SNAP_MAX_TURN = BUILDER.comment("Maximum follow turn after SNAP acquisition.")
+                .defineInRange("snap_max_turn", 18.0D, AIM_MAX_TURN_MIN, AIM_MAX_TURN_MAX);
+        FLICK_INITIAL_GAIN = BUILDER.comment("Fast-stage gain for FLICK_RETURN.")
+                .defineInRange("flick_initial_gain", 0.75D, AIM_GAIN_MIN, AIM_GAIN_MAX);
+        FLICK_INITIAL_MAX_TURN = BUILDER.comment("Fast-stage maximum turn for FLICK_RETURN.")
+                .defineInRange("flick_initial_max_turn", 35.0D, AIM_MAX_TURN_MIN, AIM_MAX_TURN_MAX);
+        FLICK_TRACK_GAIN = BUILDER.comment("Tracking gain after the flick reaches the target.")
+                .defineInRange("flick_track_gain", 0.40D, AIM_GAIN_MIN, AIM_GAIN_MAX);
+        FLICK_TRACK_MAX_TURN = BUILDER.comment("Tracking maximum turn after the flick reaches the target.")
+                .defineInRange("flick_track_max_turn", 15.0D, AIM_MAX_TURN_MIN, AIM_MAX_TURN_MAX);
+        RETURN_GAIN = BUILDER.comment("Return-to-original-view gain for FLICK_RETURN.")
+                .defineInRange("return_gain", 0.35D, AIM_GAIN_MIN, AIM_GAIN_MAX);
+        RETURN_MAX_TURN = BUILDER.comment("Return-to-original-view maximum turn per tick.")
+                .defineInRange("return_max_turn", 30.0D, AIM_MAX_TURN_MIN, AIM_MAX_TURN_MAX);
+        CONTINUOUS_SPEED = BUILDER.comment("Legacy continuous tracking speed kept for config compatibility.")
                 .defineInRange("continuous_speed", 0.90D, 0.05D, 1.0D);
         FLICK_SPEED = BUILDER.comment("Flick speed. 1.0 snaps immediately.")
                 .defineInRange("flick_speed", 1.0D, 0.05D, 1.0D);
