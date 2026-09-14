@@ -9,6 +9,7 @@ public final class AimActivationControllerTestMain {
         testScreenOpenForcesOffAndClearsTransientState();
         testDuplicateToggleClicksCountOnce();
         testConfigRangeContracts();
+        testKeySlotContract();
         System.out.println("AimActivationController tests passed");
     }
 
@@ -94,6 +95,10 @@ public final class AimActivationControllerTestMain {
         assertClose(200.0D, Config.PROJECTILE_SPEED_MAX, 0.0D, "projectile speed max");
         assertClose(50.0D, Config.MAX_TRACKED_TARGET_SPEED_MAX, 0.0D, "tracked speed max");
         assertClose(10.0D, Config.MAX_TARGET_ACCELERATION_MAX, 0.0D, "acceleration max");
+    }
+
+    private static void testKeySlotContract() {
+        assertEquals(4, Keybindings.TRIGGER_SLOT_COUNT, "trigger slot count");
     }
 
     private static void assertTrue(boolean value, String message) {
