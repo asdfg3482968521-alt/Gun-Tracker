@@ -10,6 +10,7 @@ public final class AimActivationControllerTestMain {
         testDuplicateToggleClicksCountOnce();
         testConfigRangeContracts();
         testKeySlotContract();
+        testSliderConversions();
         System.out.println("AimActivationController tests passed");
     }
 
@@ -99,6 +100,13 @@ public final class AimActivationControllerTestMain {
 
     private static void testKeySlotContract() {
         assertEquals(4, Keybindings.TRIGGER_SLOT_COUNT, "trigger slot count");
+    }
+
+    private static void testSliderConversions() {
+        assertClose(4.0D, GunTrackerConfigScreen.sliderToValue(0.0D, 4.0D, 300.0D), 1.0e-9, "slider min");
+        assertClose(300.0D, GunTrackerConfigScreen.sliderToValue(1.0D, 4.0D, 300.0D), 1.0e-9, "slider max");
+        assertClose(1.0D, GunTrackerConfigScreen.valueToSlider(300.0D, 4.0D, 300.0D), 1.0e-9, "value max");
+        assertClose(0.0D, GunTrackerConfigScreen.valueToSlider(4.0D, 4.0D, 300.0D), 1.0e-9, "value min");
     }
 
     private static void assertTrue(boolean value, String message) {
