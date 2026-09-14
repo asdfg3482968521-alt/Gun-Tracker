@@ -8,6 +8,7 @@ public final class StableAimLogicTestMain {
         testTurnCaps();
         testStableTargetConfigContracts();
         testAimModeConfigContracts();
+        testHudPositionClamp();
         System.out.println("StableAimLogic tests passed");
     }
 
@@ -77,6 +78,12 @@ public final class StableAimLogicTestMain {
         assertTrue(Config.RETURN_GAIN != null, "return gain exists");
         assertTrue(Config.RETURN_MAX_TURN != null, "return max turn exists");
         assertTrue(Keybindings.masterToggleKey == null, "master toggle key is unregistered during pure tests");
+    }
+
+    private static void testHudPositionClamp() {
+        assertClose(0.0D, HudPositionMath.clampNormalized(-0.5D), 0.0D, "hud min clamp");
+        assertClose(1.0D, HudPositionMath.clampNormalized(1.5D), 0.0D, "hud max clamp");
+        assertClose(0.37D, HudPositionMath.clampNormalized(0.37D), 0.0D, "hud unchanged");
     }
 
     private static void assertTrue(boolean value, String message) {
