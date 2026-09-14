@@ -365,7 +365,7 @@ public final class Config {
         private boolean showBallisticsHud;
 
         private ConfigScreen(Screen parent) {
-            super(Component.translatable("crispywaferguntrackermod.config.title"));
+            super(Component.translatable("invisiblekeybinding.config.title"));
             this.parent = parent;
         }
 
@@ -416,17 +416,17 @@ public final class Config {
 
             addRenderableWidget(new StringWidget(width / 2 - 160, 10, 320, 20, title, font));
 
-            addRenderableWidget(doubleSlider(x1, y0, w, h, "crispywaferguntrackermod.config.continuous_speed", continuousSpeed, 0.05D, 1.0D, v -> continuousSpeed = v, 2));
-            addRenderableWidget(doubleSlider(x1, y0 + row, w, h, "crispywaferguntrackermod.config.flick_speed", flickSpeed, 0.05D, 1.0D, v -> flickSpeed = v, 2));
-            addRenderableWidget(doubleSlider(x1, y0 + row * 2, w, h, "crispywaferguntrackermod.config.flick_return_speed", returnSpeed, 0.05D, 1.0D, v -> returnSpeed = v, 2));
+            addRenderableWidget(doubleSlider(x1, y0, w, h, "invisiblekeybinding.config.continuous_speed", continuousSpeed, 0.05D, 1.0D, v -> continuousSpeed = v, 2));
+            addRenderableWidget(doubleSlider(x1, y0 + row, w, h, "invisiblekeybinding.config.flick_speed", flickSpeed, 0.05D, 1.0D, v -> flickSpeed = v, 2));
+            addRenderableWidget(doubleSlider(x1, y0 + row * 2, w, h, "invisiblekeybinding.config.flick_return_speed", returnSpeed, 0.05D, 1.0D, v -> returnSpeed = v, 2));
             addRenderableWidget(intSlider(x1, y0 + row * 3, w, h));
-            addRenderableWidget(doubleSlider(x1, y0 + row * 4, w, h, "crispywaferguntrackermod.config.fov", fov, 5.0D, 180.0D, v -> fov = v, 0));
-            addRenderableWidget(doubleSlider(x1, y0 + row * 5, w, h, "crispywaferguntrackermod.config.max_distance", maxDistance, 4.0D, 128.0D, v -> maxDistance = v, 0));
-            addRenderableWidget(doubleSlider(x1, y0 + row * 6, w, h, "crispywaferguntrackermod.config.switch_hysteresis", switchHysteresis, 0.0D, 50.0D, v -> switchHysteresis = v, 0));
+            addRenderableWidget(doubleSlider(x1, y0 + row * 4, w, h, "invisiblekeybinding.config.fov", fov, 5.0D, 180.0D, v -> fov = v, 0));
+            addRenderableWidget(doubleSlider(x1, y0 + row * 5, w, h, "invisiblekeybinding.config.max_distance", maxDistance, 4.0D, 128.0D, v -> maxDistance = v, 0));
+            addRenderableWidget(doubleSlider(x1, y0 + row * 6, w, h, "invisiblekeybinding.config.switch_hysteresis", switchHysteresis, 0.0D, 50.0D, v -> switchHysteresis = v, 0));
 
-            addRenderableWidget(toggleButton(x2, y0, w, h, "crispywaferguntrackermod.config.instant_continuous", () -> instantContinuous, v -> instantContinuous = v));
-            addRenderableWidget(toggleButton(x2, y0 + row, w, h, "crispywaferguntrackermod.config.visible_only", () -> visibleOnly, v -> visibleOnly = v));
-            addRenderableWidget(toggleButton(x2, y0 + row * 2, w, h, "crispywaferguntrackermod.config.sticky_target", () -> stickyTarget, v -> stickyTarget = v));
+            addRenderableWidget(toggleButton(x2, y0, w, h, "invisiblekeybinding.config.instant_continuous", () -> instantContinuous, v -> instantContinuous = v));
+            addRenderableWidget(toggleButton(x2, y0 + row, w, h, "invisiblekeybinding.config.visible_only", () -> visibleOnly, v -> visibleOnly = v));
+            addRenderableWidget(toggleButton(x2, y0 + row * 2, w, h, "invisiblekeybinding.config.sticky_target", () -> stickyTarget, v -> stickyTarget = v));
             addRenderableWidget(Button.builder(targetModeMessage(), button -> {
                 targetMode = targetMode.next();
                 button.setMessage(targetModeMessage());
@@ -435,29 +435,29 @@ public final class Config {
                 aimPoint = aimPoint.next();
                 button.setMessage(aimPointMessage());
             }).bounds(x2, y0 + row * 4, w, h).build());
-            addRenderableWidget(doubleSlider(x2, y0 + row * 5, w, h, "crispywaferguntrackermod.config.custom_aim_height", customAimHeight, 0.0D, 1.20D, v -> customAimHeight = v, 2));
-            addRenderableWidget(toggleButton(x2, y0 + row * 6, w, h, "crispywaferguntrackermod.config.lead_enabled", () -> leadEnabled, v -> leadEnabled = v));
+            addRenderableWidget(doubleSlider(x2, y0 + row * 5, w, h, "invisiblekeybinding.config.custom_aim_height", customAimHeight, 0.0D, 1.20D, v -> customAimHeight = v, 2));
+            addRenderableWidget(toggleButton(x2, y0 + row * 6, w, h, "invisiblekeybinding.config.lead_enabled", () -> leadEnabled, v -> leadEnabled = v));
 
-            addRenderableWidget(toggleButton(x3, y0, w, h, "crispywaferguntrackermod.config.advanced_ballistics", () -> advancedBallistics, v -> advancedBallistics = v));
-            addRenderableWidget(toggleButton(x3, y0 + row, w, h, "crispywaferguntrackermod.config.tacz_auto_ballistics", () -> taczAutoBallistics, v -> taczAutoBallistics = v));
-            addRenderableWidget(toggleButton(x3, y0 + row * 2, w, h, "crispywaferguntrackermod.config.tacz_live_calibration", () -> taczLiveCalibration, v -> taczLiveCalibration = v));
-            addRenderableWidget(doubleSlider(x3, y0 + row * 3, w, h, "crispywaferguntrackermod.config.projectile_speed", projectileSpeed, 0.1D, 40.0D, v -> projectileSpeed = v, 1));
-            addRenderableWidget(doubleSlider(x3, y0 + row * 4, w, h, "crispywaferguntrackermod.config.projectile_friction", projectileFriction, 0.0D, 0.30D, v -> projectileFriction = v, 3));
-            addRenderableWidget(doubleSlider(x3, y0 + row * 5, w, h, "crispywaferguntrackermod.config.projectile_gravity", projectileGravity, 0.0D, 0.20D, v -> projectileGravity = v, 3));
-            addRenderableWidget(doubleSlider(x3, y0 + row * 6, w, h, "crispywaferguntrackermod.config.max_lead_ticks", maxLeadTicks, 1.0D, 40.0D, v -> maxLeadTicks = v, 0));
-            addRenderableWidget(toggleButton(x3, y0 + row * 7, w, h, "crispywaferguntrackermod.config.use_target_acceleration", () -> useTargetAcceleration, v -> useTargetAcceleration = v));
-            addRenderableWidget(toggleButton(x3, y0 + row * 8, w, h, "crispywaferguntrackermod.config.inherit_shooter_velocity", () -> inheritShooterVelocity, v -> inheritShooterVelocity = v));
-            addRenderableWidget(toggleButton(x3, y0 + row * 9, w, h, "crispywaferguntrackermod.config.show_ballistics_hud", () -> showBallisticsHud, v -> showBallisticsHud = v));
-            addRenderableWidget(toggleButton(x3, y0 + row * 10, w, h, "crispywaferguntrackermod.config.show_fov_ring", () -> showFovRing, v -> showFovRing = v));
+            addRenderableWidget(toggleButton(x3, y0, w, h, "invisiblekeybinding.config.advanced_ballistics", () -> advancedBallistics, v -> advancedBallistics = v));
+            addRenderableWidget(toggleButton(x3, y0 + row, w, h, "invisiblekeybinding.config.tacz_auto_ballistics", () -> taczAutoBallistics, v -> taczAutoBallistics = v));
+            addRenderableWidget(toggleButton(x3, y0 + row * 2, w, h, "invisiblekeybinding.config.tacz_live_calibration", () -> taczLiveCalibration, v -> taczLiveCalibration = v));
+            addRenderableWidget(doubleSlider(x3, y0 + row * 3, w, h, "invisiblekeybinding.config.projectile_speed", projectileSpeed, 0.1D, 40.0D, v -> projectileSpeed = v, 1));
+            addRenderableWidget(doubleSlider(x3, y0 + row * 4, w, h, "invisiblekeybinding.config.projectile_friction", projectileFriction, 0.0D, 0.30D, v -> projectileFriction = v, 3));
+            addRenderableWidget(doubleSlider(x3, y0 + row * 5, w, h, "invisiblekeybinding.config.projectile_gravity", projectileGravity, 0.0D, 0.20D, v -> projectileGravity = v, 3));
+            addRenderableWidget(doubleSlider(x3, y0 + row * 6, w, h, "invisiblekeybinding.config.max_lead_ticks", maxLeadTicks, 1.0D, 40.0D, v -> maxLeadTicks = v, 0));
+            addRenderableWidget(toggleButton(x3, y0 + row * 7, w, h, "invisiblekeybinding.config.use_target_acceleration", () -> useTargetAcceleration, v -> useTargetAcceleration = v));
+            addRenderableWidget(toggleButton(x3, y0 + row * 8, w, h, "invisiblekeybinding.config.inherit_shooter_velocity", () -> inheritShooterVelocity, v -> inheritShooterVelocity = v));
+            addRenderableWidget(toggleButton(x3, y0 + row * 9, w, h, "invisiblekeybinding.config.show_ballistics_hud", () -> showBallisticsHud, v -> showBallisticsHud = v));
+            addRenderableWidget(toggleButton(x3, y0 + row * 10, w, h, "invisiblekeybinding.config.show_fov_ring", () -> showFovRing, v -> showFovRing = v));
 
-            addRenderableWidget(doubleSlider(x2, y0 + row * 7, w, h, "crispywaferguntrackermod.config.velocity_smoothing", targetVelocitySmoothing, 0.05D, 1.0D, v -> targetVelocitySmoothing = v, 2));
-            addRenderableWidget(doubleSlider(x2, y0 + row * 8, w, h, "crispywaferguntrackermod.config.acceleration_smoothing", targetAccelerationSmoothing, 0.05D, 1.0D, v -> targetAccelerationSmoothing = v, 2));
-            addRenderableWidget(doubleSlider(x2, y0 + row * 9, w, h, "crispywaferguntrackermod.config.max_target_acceleration", maxTargetAcceleration, 0.0D, 2.0D, v -> maxTargetAcceleration = v, 2));
-            addRenderableWidget(toggleButton(x2, y0 + row * 10, w, h, "crispywaferguntrackermod.config.show_hud", () -> showHud, v -> showHud = v));
+            addRenderableWidget(doubleSlider(x2, y0 + row * 7, w, h, "invisiblekeybinding.config.velocity_smoothing", targetVelocitySmoothing, 0.05D, 1.0D, v -> targetVelocitySmoothing = v, 2));
+            addRenderableWidget(doubleSlider(x2, y0 + row * 8, w, h, "invisiblekeybinding.config.acceleration_smoothing", targetAccelerationSmoothing, 0.05D, 1.0D, v -> targetAccelerationSmoothing = v, 2));
+            addRenderableWidget(doubleSlider(x2, y0 + row * 9, w, h, "invisiblekeybinding.config.max_target_acceleration", maxTargetAcceleration, 0.0D, 2.0D, v -> maxTargetAcceleration = v, 2));
+            addRenderableWidget(toggleButton(x2, y0 + row * 10, w, h, "invisiblekeybinding.config.show_hud", () -> showHud, v -> showHud = v));
 
-            addRenderableWidget(toggleButton(x1, y0 + row * 7, w, h, "crispywaferguntrackermod.config.gravity_compensation", () -> gravityCompensation, v -> gravityCompensation = v));
-            addRenderableWidget(doubleSlider(x1, y0 + row * 8, w, h, "crispywaferguntrackermod.config.max_tracked_target_speed", maxTrackedTargetSpeed, 0.5D, 20.0D, v -> maxTrackedTargetSpeed = v, 1));
-            addRenderableWidget(intRangeSlider(x1, y0 + row * 9, w, h, "crispywaferguntrackermod.config.locked_rescan_interval", lockedRescanInterval, 1, 10, v -> lockedRescanInterval = v));
+            addRenderableWidget(toggleButton(x1, y0 + row * 7, w, h, "invisiblekeybinding.config.gravity_compensation", () -> gravityCompensation, v -> gravityCompensation = v));
+            addRenderableWidget(doubleSlider(x1, y0 + row * 8, w, h, "invisiblekeybinding.config.max_tracked_target_speed", maxTrackedTargetSpeed, 0.5D, 20.0D, v -> maxTrackedTargetSpeed = v, 1));
+            addRenderableWidget(intRangeSlider(x1, y0 + row * 9, w, h, "invisiblekeybinding.config.locked_rescan_interval", lockedRescanInterval, 1, 10, v -> lockedRescanInterval = v));
 
             addRenderableWidget(Button.builder(Component.translatable("gui.done"), button -> saveAndClose())
                     .bounds(width / 2 - 60, Math.min(height - 25, y0 + row * 11 + 6), 120, 20)
@@ -493,7 +493,7 @@ public final class Config {
                 @Override
                 protected void updateMessage() {
                     int actual = (int) Math.round(1 + value * 7);
-                    setMessage(Component.translatable("crispywaferguntrackermod.config.aim_substeps")
+                    setMessage(Component.translatable("invisiblekeybinding.config.aim_substeps")
                             .append(": ")
                             .append(Component.literal(Integer.toString(actual))));
                 }
@@ -536,21 +536,21 @@ public final class Config {
             return Component.translatable(key)
                     .append(": ")
                     .append(Component.translatable(value
-                            ? "crispywaferguntrackermod.config.on"
-                            : "crispywaferguntrackermod.config.off"));
+                            ? "invisiblekeybinding.config.on"
+                            : "invisiblekeybinding.config.off"));
         }
 
         private Component targetModeMessage() {
-            return Component.translatable("crispywaferguntrackermod.config.target_mode")
+            return Component.translatable("invisiblekeybinding.config.target_mode")
                     .append(": ")
-                    .append(Component.translatable("crispywaferguntrackermod.config.target_mode."
+                    .append(Component.translatable("invisiblekeybinding.config.target_mode."
                             + targetMode.name().toLowerCase(Locale.ROOT)));
         }
 
         private Component aimPointMessage() {
-            return Component.translatable("crispywaferguntrackermod.config.aim_point")
+            return Component.translatable("invisiblekeybinding.config.aim_point")
                     .append(": ")
-                    .append(Component.translatable("crispywaferguntrackermod.config.aim_point."
+                    .append(Component.translatable("invisiblekeybinding.config.aim_point."
                             + aimPoint.name().toLowerCase(Locale.ROOT)));
         }
 

@@ -32,31 +32,31 @@ public final class Keybindings {
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
         openConfigKey = new KeyMapping(
-                "key.crispywaferguntrackermod.open_config",
+                "key.invisiblekeybinding.open_config",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_ALT,
-                "key.categories.crispywaferguntrackermod"
+                "key.categories.invisiblekeybinding"
         );
         masterToggleKey = new KeyMapping(
-                "key.crispywaferguntrackermod.master_toggle",
+                "key.invisiblekeybinding.master_toggle",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
-                "key.categories.crispywaferguntrackermod"
+                "key.categories.invisiblekeybinding"
         );
         triggerKey1 = new KeyMapping(
-                "key.crispywaferguntrackermod.trigger_1",
+                "key.invisiblekeybinding.trigger_1",
                 InputConstants.Type.MOUSE,
                 GLFW.GLFW_MOUSE_BUTTON_5,
-                "key.categories.crispywaferguntrackermod"
+                "key.categories.invisiblekeybinding"
         );
-        triggerKey2 = unbound("key.crispywaferguntrackermod.trigger_2");
-        triggerKey3 = unbound("key.crispywaferguntrackermod.trigger_3");
-        triggerKey4 = unbound("key.crispywaferguntrackermod.trigger_4");
+        triggerKey2 = unbound("key.invisiblekeybinding.trigger_2");
+        triggerKey3 = unbound("key.invisiblekeybinding.trigger_3");
+        triggerKey4 = unbound("key.invisiblekeybinding.trigger_4");
         forceMoveKey = new KeyMapping(
-                "key.crispywaferguntrackermod.force_move",
+                "key.invisiblekeybinding.force_move",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_G,
-                "key.categories.crispywaferguntrackermod"
+                GLFW.GLFW_KEY_K,
+                "key.categories.invisiblekeybinding"
         );
 
         event.register(openConfigKey);
@@ -66,10 +66,10 @@ public final class Keybindings {
         event.register(triggerKey3);
         event.register(triggerKey4);
         mergeKey = new KeyMapping(
-                "key.crispywaferguntrackermod.merge_stacks",
+                "key.invisiblekeybinding.merge_stacks",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_Z,
-                "key.categories.crispywaferguntrackermod"
+                GLFW.GLFW_KEY_L,
+                "key.categories.invisiblekeybinding"
         );
 
         event.register(forceMoveKey);
@@ -84,7 +84,7 @@ public final class Keybindings {
                 translationKey,
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
-                "key.categories.crispywaferguntrackermod"
+                "key.categories.invisiblekeybinding"
         );
     }
 

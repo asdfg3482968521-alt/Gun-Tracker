@@ -93,29 +93,29 @@ public final class AimHud {
 
         if (Config.HUD_SHOW_MASTER.get()) {
             lines.add(Component.translatable(
-                    "hud.crispywaferguntrackermod.master_state",
+                    "hud.invisiblekeybinding.master_state",
                     Component.translatable(masterEnabled
-                            ? "crispywaferguntrackermod.config.on"
-                            : "crispywaferguntrackermod.config.off")
+                            ? "invisiblekeybinding.config.on"
+                            : "invisiblekeybinding.config.off")
             ));
         }
         if (Config.HUD_SHOW_MODE.get()) {
             lines.add(Component.translatable(
-                    "hud.crispywaferguntrackermod.mode",
+                    "hud.invisiblekeybinding.mode",
                     Component.translatable(modeTranslationKey(Config.AIM_BEHAVIOR.get()))
             ));
         }
         if (Config.HUD_SHOW_TARGET_NAME.get()) {
             Component name = target != null
                     ? target.getDisplayName()
-                    : (preview ? Component.literal("Steve") : Component.translatable("hud.crispywaferguntrackermod.no_target"));
-            lines.add(Component.translatable("hud.crispywaferguntrackermod.target", name));
+                    : (preview ? Component.literal("Steve") : Component.translatable("hud.invisiblekeybinding.no_target"));
+            lines.add(Component.translatable("hud.invisiblekeybinding.target", name));
         }
         if (Config.HUD_SHOW_TARGET_DISTANCE.get()) {
             String distance = target != null && mc.player != null
                     ? String.format(Locale.ROOT, "%.1f", mc.player.distanceTo(target))
                     : (preview ? "23.6" : "--");
-            lines.add(Component.translatable("hud.crispywaferguntrackermod.distance", distance));
+            lines.add(Component.translatable("hud.invisiblekeybinding.distance", distance));
         }
         return lines;
     }
@@ -126,13 +126,13 @@ public final class AimHud {
         if (profile == null) return;
 
         String sourceKey = switch (profile.source()) {
-            case TACZ_LIVE -> "hud.crispywaferguntrackermod.source.tacz_live";
-            case TACZ_DATA -> "hud.crispywaferguntrackermod.source.tacz_data";
-            case MANUAL -> "hud.crispywaferguntrackermod.source.manual";
+            case TACZ_LIVE -> "hud.invisiblekeybinding.source.tacz_live";
+            case TACZ_DATA -> "hud.invisiblekeybinding.source.tacz_data";
+            case MANUAL -> "hud.invisiblekeybinding.source.manual";
         };
         String tof = solution.valid() ? String.format(Locale.ROOT, "%.2f", solution.timeTicks()) : "--";
         Component ballistic = Component.translatable(
-                "hud.crispywaferguntrackermod.ballistics",
+                "hud.invisiblekeybinding.ballistics",
                 Component.translatable(sourceKey),
                 String.format(Locale.ROOT, "%.2f", profile.speedBlocksPerTick()),
                 String.format(Locale.ROOT, "%.3f", profile.gravityPerTick()),
@@ -145,9 +145,9 @@ public final class AimHud {
 
     static String modeTranslationKey(Config.AimBehavior behavior) {
         return switch (behavior) {
-            case SMOOTH_TRACK -> "hud.crispywaferguntrackermod.mode.smooth_track";
-            case SNAP -> "hud.crispywaferguntrackermod.mode.snap";
-            case FLICK_RETURN -> "hud.crispywaferguntrackermod.mode.flick_return";
+            case SMOOTH_TRACK -> "hud.invisiblekeybinding.mode.smooth_track";
+            case SNAP -> "hud.invisiblekeybinding.mode.snap";
+            case FLICK_RETURN -> "hud.invisiblekeybinding.mode.flick_return";
         };
     }
 

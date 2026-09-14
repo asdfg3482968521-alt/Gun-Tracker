@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod(CrispyWaferGunTrackerMod.MODID)
 public final class CrispyWaferGunTrackerMod {
-    public static final String MODID = "crispywaferguntrackermod";
+    public static final String MODID = "invisiblekeybinding";
 
     public CrispyWaferGunTrackerMod() {
         Config.register();

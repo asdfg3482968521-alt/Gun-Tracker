@@ -15,7 +15,7 @@ public final class HudPositionScreen extends Screen {
     private AimHud.HudBounds bounds = new AimHud.HudBounds(0, 0, 0, 0);
 
     public HudPositionScreen(Screen parent) {
-        super(Component.translatable("crispywaferguntrackermod.hud_position.title"));
+        super(Component.translatable("invisiblekeybinding.hud_position.title"));
         this.parent = parent;
         this.originalX = Config.HUD_X_NORMALIZED.get();
         this.originalY = Config.HUD_Y_NORMALIZED.get();
@@ -26,7 +26,7 @@ public final class HudPositionScreen extends Screen {
         int y = height - 30;
         addRenderableWidget(Button.builder(Component.translatable("gui.done"), button -> commitAndClose())
                 .bounds(width / 2 + 4, y, 96, 20).build());
-        addRenderableWidget(Button.builder(Component.translatable("crispywaferguntrackermod.config.hud_reset_position"), button -> {
+        addRenderableWidget(Button.builder(Component.translatable("invisiblekeybinding.config.hud_reset_position"), button -> {
             Config.HUD_X_NORMALIZED.set(0.50D);
             Config.HUD_Y_NORMALIZED.set(0.62D);
         }).bounds(width / 2 - 100, y, 96, 20).build());
@@ -86,7 +86,7 @@ public final class HudPositionScreen extends Screen {
         graphics.fill(0, 0, width, height, 0x66000000);
         graphics.drawCenteredString(font, title, width / 2, 10, 0xFFFFFF);
         graphics.drawCenteredString(font,
-                Component.translatable("crispywaferguntrackermod.hud_position.instruction"),
+                Component.translatable("invisiblekeybinding.hud_position.instruction"),
                 width / 2, 26, 0xD0D0D0);
 
         Minecraft mc = Minecraft.getInstance();

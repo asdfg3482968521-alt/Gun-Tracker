@@ -23,13 +23,13 @@ public final class GunTrackerConfigScreen extends Screen {
     private static final int NAV_WIDTH = 106;
 
     private enum Page {
-        GENERAL("crispywaferguntrackermod.config.page.general"),
-        AIM("crispywaferguntrackermod.config.page.aim"),
-        TARGET("crispywaferguntrackermod.config.page.target"),
-        BALLISTICS("crispywaferguntrackermod.config.page.ballistics"),
-        KEYS("crispywaferguntrackermod.config.page.keys"),
-        HUD("crispywaferguntrackermod.config.page.hud"),
-        WEAPON("crispywaferguntrackermod.config.page.weapon");
+        GENERAL("invisiblekeybinding.config.page.general"),
+        AIM("invisiblekeybinding.config.page.aim"),
+        TARGET("invisiblekeybinding.config.page.target"),
+        BALLISTICS("invisiblekeybinding.config.page.ballistics"),
+        KEYS("invisiblekeybinding.config.page.keys"),
+        HUD("invisiblekeybinding.config.page.hud"),
+        WEAPON("invisiblekeybinding.config.page.weapon");
 
         private final String translationKey;
 
@@ -57,7 +57,7 @@ public final class GunTrackerConfigScreen extends Screen {
     private int visibleRows;
 
     public GunTrackerConfigScreen(Screen parent) {
-        super(Component.translatable("crispywaferguntrackermod.config.title"));
+        super(Component.translatable("invisiblekeybinding.config.title"));
         this.parent = parent;
     }
 
@@ -127,175 +127,175 @@ public final class GunTrackerConfigScreen extends Screen {
     }
 
     private void buildGeneralPage() {
-        addToggleRow(0, "crispywaferguntrackermod.config.master_enabled",
+        addToggleRow(0, "invisiblekeybinding.config.master_enabled",
                 () -> Config.MASTER_ENABLED.get(), Config.MASTER_ENABLED::set);
-        addCycleRow(1, "crispywaferguntrackermod.config.aim_behavior",
+        addCycleRow(1, "invisiblekeybinding.config.aim_behavior",
                 this::aimBehaviorValue, () -> {
                     Config.AIM_BEHAVIOR.set(Config.AIM_BEHAVIOR.get().next());
                     rebuildWidgets();
                 });
-        addIntSliderRow(2, "crispywaferguntrackermod.config.long_press_ms",
+        addIntSliderRow(2, "invisiblekeybinding.config.long_press_ms",
                 Config.LONG_PRESS_MS::get, Config.LONG_PRESS_MS::set,
                 Config.LONG_PRESS_MS_MIN, Config.LONG_PRESS_MS_MAX,
-                "crispywaferguntrackermod.unit.ms");
+                "invisiblekeybinding.unit.ms");
     }
 
     private void buildAimPage() {
-        addIntSliderRow(0, "crispywaferguntrackermod.config.view_stability",
+        addIntSliderRow(0, "invisiblekeybinding.config.view_stability",
                 Config.VIEW_STABILITY::get, Config.VIEW_STABILITY::set,
                 Config.VIEW_STABILITY_MIN, Config.VIEW_STABILITY_MAX, null);
 
         switch (Config.AIM_BEHAVIOR.get()) {
             case SMOOTH_TRACK -> {
-                addDoubleSliderRow(1, "crispywaferguntrackermod.config.smooth_follow_gain",
+                addDoubleSliderRow(1, "invisiblekeybinding.config.smooth_follow_gain",
                         Config.SMOOTH_FOLLOW_GAIN::get, Config.SMOOTH_FOLLOW_GAIN::set,
                         Config.AIM_GAIN_MIN, Config.AIM_GAIN_MAX, 2, null);
-                addDoubleSliderRow(2, "crispywaferguntrackermod.config.smooth_max_turn",
+                addDoubleSliderRow(2, "invisiblekeybinding.config.smooth_max_turn",
                         Config.SMOOTH_MAX_TURN::get, Config.SMOOTH_MAX_TURN::set,
                         Config.AIM_MAX_TURN_MIN, Config.AIM_MAX_TURN_MAX, 1,
-                        "crispywaferguntrackermod.unit.degree_per_tick");
+                        "invisiblekeybinding.unit.degree_per_tick");
             }
             case SNAP -> {
-                addDoubleSliderRow(1, "crispywaferguntrackermod.config.snap_follow_gain",
+                addDoubleSliderRow(1, "invisiblekeybinding.config.snap_follow_gain",
                         Config.SNAP_FOLLOW_GAIN::get, Config.SNAP_FOLLOW_GAIN::set,
                         Config.AIM_GAIN_MIN, Config.AIM_GAIN_MAX, 2, null);
-                addDoubleSliderRow(2, "crispywaferguntrackermod.config.snap_max_turn",
+                addDoubleSliderRow(2, "invisiblekeybinding.config.snap_max_turn",
                         Config.SNAP_MAX_TURN::get, Config.SNAP_MAX_TURN::set,
                         Config.AIM_MAX_TURN_MIN, Config.AIM_MAX_TURN_MAX, 1,
-                        "crispywaferguntrackermod.unit.degree_per_tick");
+                        "invisiblekeybinding.unit.degree_per_tick");
             }
             case FLICK_RETURN -> {
-                addDoubleSliderRow(1, "crispywaferguntrackermod.config.flick_initial_gain",
+                addDoubleSliderRow(1, "invisiblekeybinding.config.flick_initial_gain",
                         Config.FLICK_INITIAL_GAIN::get, Config.FLICK_INITIAL_GAIN::set,
                         Config.AIM_GAIN_MIN, Config.AIM_GAIN_MAX, 2, null);
-                addDoubleSliderRow(2, "crispywaferguntrackermod.config.flick_initial_max_turn",
+                addDoubleSliderRow(2, "invisiblekeybinding.config.flick_initial_max_turn",
                         Config.FLICK_INITIAL_MAX_TURN::get, Config.FLICK_INITIAL_MAX_TURN::set,
                         Config.AIM_MAX_TURN_MIN, Config.AIM_MAX_TURN_MAX, 1,
-                        "crispywaferguntrackermod.unit.degree_per_tick");
-                addDoubleSliderRow(3, "crispywaferguntrackermod.config.flick_track_gain",
+                        "invisiblekeybinding.unit.degree_per_tick");
+                addDoubleSliderRow(3, "invisiblekeybinding.config.flick_track_gain",
                         Config.FLICK_TRACK_GAIN::get, Config.FLICK_TRACK_GAIN::set,
                         Config.AIM_GAIN_MIN, Config.AIM_GAIN_MAX, 2, null);
-                addDoubleSliderRow(4, "crispywaferguntrackermod.config.flick_track_max_turn",
+                addDoubleSliderRow(4, "invisiblekeybinding.config.flick_track_max_turn",
                         Config.FLICK_TRACK_MAX_TURN::get, Config.FLICK_TRACK_MAX_TURN::set,
                         Config.AIM_MAX_TURN_MIN, Config.AIM_MAX_TURN_MAX, 1,
-                        "crispywaferguntrackermod.unit.degree_per_tick");
-                addDoubleSliderRow(5, "crispywaferguntrackermod.config.return_gain",
+                        "invisiblekeybinding.unit.degree_per_tick");
+                addDoubleSliderRow(5, "invisiblekeybinding.config.return_gain",
                         Config.RETURN_GAIN::get, Config.RETURN_GAIN::set,
                         Config.AIM_GAIN_MIN, Config.AIM_GAIN_MAX, 2, null);
-                addDoubleSliderRow(6, "crispywaferguntrackermod.config.return_max_turn",
+                addDoubleSliderRow(6, "invisiblekeybinding.config.return_max_turn",
                         Config.RETURN_MAX_TURN::get, Config.RETURN_MAX_TURN::set,
                         Config.AIM_MAX_TURN_MIN, Config.AIM_MAX_TURN_MAX, 1,
-                        "crispywaferguntrackermod.unit.degree_per_tick");
+                        "invisiblekeybinding.unit.degree_per_tick");
             }
         }
     }
 
     private void buildTargetPage() {
-        addDoubleSliderRow(0, "crispywaferguntrackermod.config.max_distance",
+        addDoubleSliderRow(0, "invisiblekeybinding.config.max_distance",
                 Config.MAX_DISTANCE::get, Config.MAX_DISTANCE::set,
                 Config.MAX_DISTANCE_MIN, Config.MAX_DISTANCE_MAX, 0,
-                "crispywaferguntrackermod.unit.blocks");
-        addDoubleSliderRow(1, "crispywaferguntrackermod.config.fov",
+                "invisiblekeybinding.unit.blocks");
+        addDoubleSliderRow(1, "invisiblekeybinding.config.fov",
                 Config.AIM_FOV_DEGREES::get, this::setSearchFov,
-                5.0D, 180.0D, 0, "crispywaferguntrackermod.unit.degree");
-        addDoubleSliderRow(2, "crispywaferguntrackermod.config.unlock_fov",
+                5.0D, 180.0D, 0, "invisiblekeybinding.unit.degree");
+        addDoubleSliderRow(2, "invisiblekeybinding.config.unlock_fov",
                 Config.UNLOCK_FOV_DEGREES::get, this::setUnlockFov,
                 Config.UNLOCK_FOV_MIN, Config.UNLOCK_FOV_MAX, 0,
-                "crispywaferguntrackermod.unit.degree");
-        addToggleRow(3, "crispywaferguntrackermod.config.visible_only",
+                "invisiblekeybinding.unit.degree");
+        addToggleRow(3, "invisiblekeybinding.config.visible_only",
                 Config.VISIBLE_ONLY::get, Config.VISIBLE_ONLY::set);
-        addToggleRow(4, "crispywaferguntrackermod.config.target_players",
+        addToggleRow(4, "invisiblekeybinding.config.target_players",
                 Config.TARGET_PLAYERS::get, Config.TARGET_PLAYERS::set);
-        addToggleRow(5, "crispywaferguntrackermod.config.target_hostiles",
+        addToggleRow(5, "invisiblekeybinding.config.target_hostiles",
                 Config.TARGET_HOSTILES::get, Config.TARGET_HOSTILES::set);
-        addToggleRow(6, "crispywaferguntrackermod.config.target_others",
+        addToggleRow(6, "invisiblekeybinding.config.target_others",
                 Config.TARGET_OTHERS::get, Config.TARGET_OTHERS::set);
-        addToggleRow(7, "crispywaferguntrackermod.config.all_targets",
+        addToggleRow(7, "invisiblekeybinding.config.all_targets",
                 this::allTargetsEnabled, this::setAllTargets);
-        addCycleRow(8, "crispywaferguntrackermod.config.anti_bot_mode", this::antiBotModeValue, () -> {
+        addCycleRow(8, "invisiblekeybinding.config.anti_bot_mode", this::antiBotModeValue, () -> {
             Config.ANTI_BOT_MODE.set(Config.ANTI_BOT_MODE.get().next());
             rebuildWidgets();
         });
-        addIntSliderRow(9, "crispywaferguntrackermod.config.stickiness",
+        addIntSliderRow(9, "invisiblekeybinding.config.stickiness",
                 Config.STICKINESS::get, Config.STICKINESS::set,
                 Config.STICKINESS_MIN, Config.STICKINESS_MAX, null);
-        addIntSliderRow(10, "crispywaferguntrackermod.config.switch_confirm_ticks",
+        addIntSliderRow(10, "invisiblekeybinding.config.switch_confirm_ticks",
                 Config.SWITCH_CONFIRM_TICKS::get, Config.SWITCH_CONFIRM_TICKS::set,
                 Config.SWITCH_CONFIRM_TICKS_MIN, Config.SWITCH_CONFIRM_TICKS_MAX,
-                "crispywaferguntrackermod.unit.ticks");
-        addIntSliderRow(11, "crispywaferguntrackermod.config.invisible_tolerance_ticks",
+                "invisiblekeybinding.unit.ticks");
+        addIntSliderRow(11, "invisiblekeybinding.config.invisible_tolerance_ticks",
                 Config.INVISIBLE_TOLERANCE_TICKS::get, Config.INVISIBLE_TOLERANCE_TICKS::set,
                 Config.INVISIBLE_TOLERANCE_TICKS_MIN, Config.INVISIBLE_TOLERANCE_TICKS_MAX,
-                "crispywaferguntrackermod.unit.ticks");
-        addIntSliderRow(12, "crispywaferguntrackermod.config.candidate_scan_interval",
+                "invisiblekeybinding.unit.ticks");
+        addIntSliderRow(12, "invisiblekeybinding.config.candidate_scan_interval",
                 Config.CANDIDATE_SCAN_INTERVAL::get, Config.CANDIDATE_SCAN_INTERVAL::set,
                 Config.CANDIDATE_SCAN_INTERVAL_MIN, Config.CANDIDATE_SCAN_INTERVAL_MAX,
-                "crispywaferguntrackermod.unit.ticks");
-        addCycleRow(13, "crispywaferguntrackermod.config.aim_point", this::aimPointValue, () -> {
+                "invisiblekeybinding.unit.ticks");
+        addCycleRow(13, "invisiblekeybinding.config.aim_point", this::aimPointValue, () -> {
             Config.AIM_POINT.set(Config.AIM_POINT.get().next());
             rebuildWidgets();
         });
-        addDoubleSliderRow(14, "crispywaferguntrackermod.config.custom_aim_height",
+        addDoubleSliderRow(14, "invisiblekeybinding.config.custom_aim_height",
                 Config.CUSTOM_AIM_HEIGHT::get, Config.CUSTOM_AIM_HEIGHT::set, 0.0D, 1.20D, 2, null);
     }
 
     private void buildBallisticsPage() {
-        addToggleRow(0, "crispywaferguntrackermod.config.lead_enabled",
+        addToggleRow(0, "invisiblekeybinding.config.lead_enabled",
                 Config.LEAD_ENABLED::get, Config.LEAD_ENABLED::set);
-        addDoubleSliderRow(1, "crispywaferguntrackermod.config.projectile_speed",
+        addDoubleSliderRow(1, "invisiblekeybinding.config.projectile_speed",
                 Config.PROJECTILE_SPEED::get, Config.PROJECTILE_SPEED::set,
                 Config.PROJECTILE_SPEED_MIN, Config.PROJECTILE_SPEED_MAX, 1,
-                "crispywaferguntrackermod.unit.blocks_per_tick");
-        addDoubleSliderRow(2, "crispywaferguntrackermod.config.projectile_friction",
+                "invisiblekeybinding.unit.blocks_per_tick");
+        addDoubleSliderRow(2, "invisiblekeybinding.config.projectile_friction",
                 Config.PROJECTILE_FRICTION::get, Config.PROJECTILE_FRICTION::set, 0.0D, 0.30D, 3, null);
-        addDoubleSliderRow(3, "crispywaferguntrackermod.config.max_lead_ticks",
+        addDoubleSliderRow(3, "invisiblekeybinding.config.max_lead_ticks",
                 Config.MAX_LEAD_TICKS::get, Config.MAX_LEAD_TICKS::set,
                 Config.MAX_LEAD_TICKS_MIN, Config.MAX_LEAD_TICKS_MAX, 0,
-                "crispywaferguntrackermod.unit.ticks");
-        addToggleRow(4, "crispywaferguntrackermod.config.gravity_compensation",
+                "invisiblekeybinding.unit.ticks");
+        addToggleRow(4, "invisiblekeybinding.config.gravity_compensation",
                 Config.GRAVITY_COMPENSATION::get, Config.GRAVITY_COMPENSATION::set);
-        addDoubleSliderRow(5, "crispywaferguntrackermod.config.projectile_gravity",
+        addDoubleSliderRow(5, "invisiblekeybinding.config.projectile_gravity",
                 Config.PROJECTILE_GRAVITY::get, Config.PROJECTILE_GRAVITY::set, 0.0D, 0.20D, 3, null);
-        addToggleRow(6, "crispywaferguntrackermod.config.advanced_ballistics",
+        addToggleRow(6, "invisiblekeybinding.config.advanced_ballistics",
                 Config.ADVANCED_BALLISTICS::get, Config.ADVANCED_BALLISTICS::set);
-        addToggleRow(7, "crispywaferguntrackermod.config.tacz_auto_ballistics",
+        addToggleRow(7, "invisiblekeybinding.config.tacz_auto_ballistics",
                 Config.TACZ_AUTO_BALLISTICS::get, Config.TACZ_AUTO_BALLISTICS::set);
-        addToggleRow(8, "crispywaferguntrackermod.config.tacz_live_calibration",
+        addToggleRow(8, "invisiblekeybinding.config.tacz_live_calibration",
                 Config.TACZ_LIVE_CALIBRATION::get, Config.TACZ_LIVE_CALIBRATION::set);
-        addToggleRow(9, "crispywaferguntrackermod.config.use_target_acceleration",
+        addToggleRow(9, "invisiblekeybinding.config.use_target_acceleration",
                 Config.USE_TARGET_ACCELERATION::get, Config.USE_TARGET_ACCELERATION::set);
-        addDoubleSliderRow(10, "crispywaferguntrackermod.config.velocity_smoothing",
+        addDoubleSliderRow(10, "invisiblekeybinding.config.velocity_smoothing",
                 Config.TARGET_VELOCITY_SMOOTHING::get, Config.TARGET_VELOCITY_SMOOTHING::set,
                 0.05D, 1.0D, 2, null);
-        addDoubleSliderRow(11, "crispywaferguntrackermod.config.acceleration_smoothing",
+        addDoubleSliderRow(11, "invisiblekeybinding.config.acceleration_smoothing",
                 Config.TARGET_ACCELERATION_SMOOTHING::get, Config.TARGET_ACCELERATION_SMOOTHING::set,
                 0.05D, 1.0D, 2, null);
-        addDoubleSliderRow(12, "crispywaferguntrackermod.config.max_target_acceleration",
+        addDoubleSliderRow(12, "invisiblekeybinding.config.max_target_acceleration",
                 Config.MAX_TARGET_ACCELERATION::get, Config.MAX_TARGET_ACCELERATION::set,
                 Config.MAX_TARGET_ACCELERATION_MIN, Config.MAX_TARGET_ACCELERATION_MAX, 2, null);
-        addDoubleSliderRow(13, "crispywaferguntrackermod.config.max_tracked_target_speed",
+        addDoubleSliderRow(13, "invisiblekeybinding.config.max_tracked_target_speed",
                 Config.MAX_TRACKED_TARGET_SPEED::get, Config.MAX_TRACKED_TARGET_SPEED::set,
                 Config.MAX_TRACKED_TARGET_SPEED_MIN, Config.MAX_TRACKED_TARGET_SPEED_MAX, 1,
-                "crispywaferguntrackermod.unit.blocks_per_tick");
-        addToggleRow(14, "crispywaferguntrackermod.config.inherit_shooter_velocity",
+                "invisiblekeybinding.unit.blocks_per_tick");
+        addToggleRow(14, "invisiblekeybinding.config.inherit_shooter_velocity",
                 Config.INHERIT_SHOOTER_VELOCITY::get, Config.INHERIT_SHOOTER_VELOCITY::set);
-        addIntSliderRow(15, "crispywaferguntrackermod.config.locked_rescan_interval",
+        addIntSliderRow(15, "invisiblekeybinding.config.locked_rescan_interval",
                 Config.LOCKED_RESCAN_INTERVAL::get, Config.LOCKED_RESCAN_INTERVAL::set,
-                1, 10, "crispywaferguntrackermod.unit.ticks");
+                1, 10, "invisiblekeybinding.unit.ticks");
     }
 
     private void buildWeaponPage() {
-        addToggleRow(0, "crispywaferguntrackermod.config.no_recoil",
+        addToggleRow(0, "invisiblekeybinding.config.no_recoil",
                 Config.NO_RECOIL::get, Config.NO_RECOIL::set);
-        addDoubleSliderRow(1, "crispywaferguntrackermod.config.recoil_cancel_strength",
+        addDoubleSliderRow(1, "invisiblekeybinding.config.recoil_cancel_strength",
                 Config.RECOIL_CANCEL_STRENGTH::get, Config.RECOIL_CANCEL_STRENGTH::set,
                 Config.RECOIL_CANCEL_MIN, Config.RECOIL_CANCEL_MAX, 0, null);
-        addToggleRow(2, "crispywaferguntrackermod.config.weapon_feel",
+        addToggleRow(2, "invisiblekeybinding.config.weapon_feel",
                 Config.WEAPON_FEEL::get, Config.WEAPON_FEEL::set);
-        addDoubleSliderRow(3, "crispywaferguntrackermod.config.weapon_stability",
+        addDoubleSliderRow(3, "invisiblekeybinding.config.weapon_stability",
                 Config.WEAPON_STABILITY::get, Config.WEAPON_STABILITY::set,
                 Config.WEAPON_STABILITY_MIN, Config.WEAPON_STABILITY_MAX, 0, null);
-        addToggleRow(4, "crispywaferguntrackermod.config.keep_vanilla_bob",
+        addToggleRow(4, "invisiblekeybinding.config.keep_vanilla_bob",
                 Config.KEEP_VANILLA_BOB::get, Config.KEEP_VANILLA_BOB::set);
     }
 
@@ -307,28 +307,28 @@ public final class GunTrackerConfigScreen extends Screen {
     }
 
     private void buildHudPage() {
-        addToggleRow(0, "crispywaferguntrackermod.config.show_hud",
+        addToggleRow(0, "invisiblekeybinding.config.show_hud",
                 Config.SHOW_HUD::get, Config.SHOW_HUD::set);
-        addToggleRow(1, "crispywaferguntrackermod.config.hud_show_master",
+        addToggleRow(1, "invisiblekeybinding.config.hud_show_master",
                 Config.HUD_SHOW_MASTER::get, Config.HUD_SHOW_MASTER::set);
-        addToggleRow(2, "crispywaferguntrackermod.config.hud_show_mode",
+        addToggleRow(2, "invisiblekeybinding.config.hud_show_mode",
                 Config.HUD_SHOW_MODE::get, Config.HUD_SHOW_MODE::set);
-        addToggleRow(3, "crispywaferguntrackermod.config.hud_show_target_name",
+        addToggleRow(3, "invisiblekeybinding.config.hud_show_target_name",
                 Config.HUD_SHOW_TARGET_NAME::get, Config.HUD_SHOW_TARGET_NAME::set);
-        addToggleRow(4, "crispywaferguntrackermod.config.hud_show_target_distance",
+        addToggleRow(4, "invisiblekeybinding.config.hud_show_target_distance",
                 Config.HUD_SHOW_TARGET_DISTANCE::get, Config.HUD_SHOW_TARGET_DISTANCE::set);
-        addToggleRow(5, "crispywaferguntrackermod.config.show_fov_ring",
+        addToggleRow(5, "invisiblekeybinding.config.show_fov_ring",
                 Config.SHOW_FOV_RING::get, Config.SHOW_FOV_RING::set);
-        addToggleRow(6, "crispywaferguntrackermod.config.show_ballistics_hud",
+        addToggleRow(6, "invisiblekeybinding.config.show_ballistics_hud",
                 Config.SHOW_BALLISTICS_HUD::get, Config.SHOW_BALLISTICS_HUD::set);
         if (isRowVisible(7)) {
-            addRenderableWidget(Button.builder(Component.translatable("crispywaferguntrackermod.config.hud_adjust_position"), button -> {
+            addRenderableWidget(Button.builder(Component.translatable("invisiblekeybinding.config.hud_adjust_position"), button -> {
                 Config.CLIENT_SPEC.save();
                 if (minecraft != null) minecraft.setScreen(new HudPositionScreen(this));
             }).bounds(contentLeft, rowY(7), contentWidth(), 20).build());
         }
         if (isRowVisible(8)) {
-            addRenderableWidget(Button.builder(Component.translatable("crispywaferguntrackermod.config.hud_reset_position"), button -> {
+            addRenderableWidget(Button.builder(Component.translatable("invisiblekeybinding.config.hud_reset_position"), button -> {
                 Config.HUD_X_NORMALIZED.set(0.50D);
                 Config.HUD_Y_NORMALIZED.set(0.62D);
                 Config.CLIENT_SPEC.save();
@@ -345,13 +345,13 @@ public final class GunTrackerConfigScreen extends Screen {
     }
 
     private Component masterBindingMessage() {
-        Component name = Component.translatable("crispywaferguntrackermod.config.master_toggle_binding");
+        Component name = Component.translatable("invisiblekeybinding.config.master_toggle_binding");
         if (capturingSlot == CAPTURE_MASTER) {
-            return name.copy().append(": ").append(Component.translatable("crispywaferguntrackermod.config.press_any_key"));
+            return name.copy().append(": ").append(Component.translatable("invisiblekeybinding.config.press_any_key"));
         }
         KeyMapping mapping = Keybindings.masterToggleKey;
         Component bound = mapping == null || mapping.isUnbound()
-                ? Component.translatable("crispywaferguntrackermod.config.unbound")
+                ? Component.translatable("invisiblekeybinding.config.unbound")
                 : mapping.getTranslatedKeyMessage();
         Component result = name.copy().append(": ").append(bound);
         if (hasMasterDuplicateBinding()) result = result.copy().append(" ⚠");
@@ -451,13 +451,13 @@ public final class GunTrackerConfigScreen extends Screen {
     }
 
     private Component triggerBindingMessage(int slot) {
-        Component name = Component.translatable("crispywaferguntrackermod.config.trigger_slot", slot + 1);
+        Component name = Component.translatable("invisiblekeybinding.config.trigger_slot", slot + 1);
         if (capturingSlot == slot) {
-            return name.copy().append(": ").append(Component.translatable("crispywaferguntrackermod.config.press_any_key"));
+            return name.copy().append(": ").append(Component.translatable("invisiblekeybinding.config.press_any_key"));
         }
         KeyMapping mapping = Keybindings.triggerKey(slot);
         Component bound = mapping == null || mapping.isUnbound()
-                ? Component.translatable("crispywaferguntrackermod.config.unbound")
+                ? Component.translatable("invisiblekeybinding.config.unbound")
                 : mapping.getTranslatedKeyMessage();
         Component result = name.copy().append(": ").append(bound);
         if (hasDuplicateBinding(slot)) {
@@ -467,7 +467,7 @@ public final class GunTrackerConfigScreen extends Screen {
     }
 
     private Component triggerModeMessage(int slot) {
-        return Component.translatable("crispywaferguntrackermod.config.trigger_mode")
+        return Component.translatable("invisiblekeybinding.config.trigger_mode")
                 .append(": ")
                 .append(triggerModeValue(getTriggerMode(slot)));
     }
@@ -507,35 +507,35 @@ public final class GunTrackerConfigScreen extends Screen {
 
     private Component aimBehaviorValue() {
         String name = Config.AIM_BEHAVIOR.get().name().toLowerCase(Locale.ROOT);
-        return Component.translatable("crispywaferguntrackermod.config.aim_behavior." + name);
+        return Component.translatable("invisiblekeybinding.config.aim_behavior." + name);
     }
 
     private Component antiBotModeValue() {
         String name = Config.ANTI_BOT_MODE.get().name().toLowerCase(Locale.ROOT);
-        return Component.translatable("crispywaferguntrackermod.config.anti_bot_mode." + name);
+        return Component.translatable("invisiblekeybinding.config.anti_bot_mode." + name);
     }
 
     private Component targetModeValue() {
         String name = Config.TARGET_MODE.get().name().toLowerCase(Locale.ROOT);
-        return Component.translatable("crispywaferguntrackermod.config.target_mode." + name);
+        return Component.translatable("invisiblekeybinding.config.target_mode." + name);
     }
 
     private Component aimPointValue() {
         String name = Config.AIM_POINT.get().name().toLowerCase(Locale.ROOT);
-        return Component.translatable("crispywaferguntrackermod.config.aim_point." + name);
+        return Component.translatable("invisiblekeybinding.config.aim_point." + name);
     }
 
     private Component triggerModeValue(AimActivationController.TriggerMode mode) {
         String name = mode.name().toLowerCase(Locale.ROOT);
-        return Component.translatable("crispywaferguntrackermod.config.trigger_mode." + name);
+        return Component.translatable("invisiblekeybinding.config.trigger_mode." + name);
     }
 
     private Component toggleMessage(String labelKey, boolean value) {
         return Component.translatable(labelKey)
                 .append(": ")
                 .append(Component.translatable(value
-                        ? "crispywaferguntrackermod.config.on"
-                        : "crispywaferguntrackermod.config.off"));
+                        ? "invisiblekeybinding.config.on"
+                        : "invisiblekeybinding.config.off"));
     }
 
     private Component labeledValue(String labelKey, Component value) {
@@ -665,12 +665,12 @@ public final class GunTrackerConfigScreen extends Screen {
 
         if (page == Page.KEYS) {
             graphics.drawString(font,
-                    Component.translatable("crispywaferguntrackermod.config.key_capture_help"),
+                    Component.translatable("invisiblekeybinding.config.key_capture_help"),
                     contentLeft, panelBottom - 39, 0xBFBFBF, false);
         }
         if (totalRows() > visibleRows) {
             graphics.drawString(font,
-                    Component.translatable("crispywaferguntrackermod.config.scroll_hint"),
+                    Component.translatable("invisiblekeybinding.config.scroll_hint"),
                     contentRight - 92, panelTop + 12, 0xBFBFBF, false);
         }
         super.render(graphics, mouseX, mouseY, partialTick);

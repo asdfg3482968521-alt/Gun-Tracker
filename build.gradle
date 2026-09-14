@@ -10,7 +10,7 @@ version = mod_version
 group = mod_group_id
 
 base {
-    archivesName = 'gun-tracker-singleplayer-enhanced'
+    archivesName = 'invisiblekeybinding'
 }
 
 java {
@@ -28,7 +28,7 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'info'
             mods {
-                crispywaferguntrackermod {
+                invisiblekeybinding {
                     source sourceSets.main
                 }
             }
