@@ -11,6 +11,7 @@ public final class AimActivationControllerTestMain {
         testConfigRangeContracts();
         testKeySlotContract();
         testSliderConversions();
+        testReturnBehaviorContract();
         System.out.println("AimActivationController tests passed");
     }
 
@@ -107,6 +108,12 @@ public final class AimActivationControllerTestMain {
         assertClose(300.0D, GunTrackerConfigScreen.sliderToValue(1.0D, 4.0D, 300.0D), 1.0e-9, "slider max");
         assertClose(1.0D, GunTrackerConfigScreen.valueToSlider(300.0D, 4.0D, 300.0D), 1.0e-9, "value max");
         assertClose(0.0D, GunTrackerConfigScreen.valueToSlider(4.0D, 4.0D, 300.0D), 1.0e-9, "value min");
+    }
+
+    private static void testReturnBehaviorContract() {
+        assertFalse(AimHandler.shouldReturnAfterRelease(Config.AimBehavior.SMOOTH_TRACK), "smooth mode should not return");
+        assertFalse(AimHandler.shouldReturnAfterRelease(Config.AimBehavior.SNAP), "snap mode should not return");
+        assertTrue(AimHandler.shouldReturnAfterRelease(Config.AimBehavior.FLICK_RETURN), "flick-return mode should return");
     }
 
     private static void assertTrue(boolean value, String message) {
