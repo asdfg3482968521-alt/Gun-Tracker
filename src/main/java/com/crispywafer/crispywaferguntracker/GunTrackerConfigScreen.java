@@ -87,7 +87,8 @@ public final class GunTrackerConfigScreen extends Screen {
         clampScroll();
     }
 
-    private void rebuildWidgets() {
+    @Override
+    protected void rebuildWidgets() {
         clearWidgets();
         computeLayout();
 
