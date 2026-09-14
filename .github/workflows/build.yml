@@ -43,6 +43,18 @@ jobs:
             git push
           fi
 
+      - name: Apply compile fix
+        if: ${{ hashFiles('.github/scripts/fix_weapon_page_rows.py') != '' }}
+        run: |
+          python .github/scripts/fix_weapon_page_rows.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: include weapon page in row count"
+            git push
+          fi
+
       - name: Build
         run: gradle clean build --stacktrace --no-daemon
 
