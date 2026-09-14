@@ -1,0 +1,33 @@
+name: Package Updated Source
+
+on:
+  push:
+    branches:
+      - package/source-bfe5f77
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout verified main source
+        uses: actions/checkout@v6
+        with:
+          ref: bfe5f77bf0d9f9d749ead9d8cbd14c52ae69e02c
+          fetch-depth: 1
+
+      - name: Create source ZIP
+        run: |
+          git archive --format=zip --prefix=Gun-Tracker-updated-src/ HEAD -o Gun-Tracker-updated-src.zip
+
+      - name: Upload source ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: gun-tracker-updated-source-bfe5f77
+          path: Gun-Tracker-updated-src.zip
+          if-no-files-found: error
+          retention-days: 30
