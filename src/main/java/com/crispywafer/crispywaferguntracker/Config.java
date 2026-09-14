@@ -197,7 +197,7 @@ public final class Config {
     }
 
     public static Screen createConfigScreen(Minecraft minecraft, Screen parent) {
-        return new ConfigScreen(parent);
+        return new GunTrackerConfigScreen(parent);
     }
 
     private static final class ConfigScreen extends Screen {
