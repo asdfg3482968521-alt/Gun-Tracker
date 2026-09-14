@@ -76,7 +76,7 @@ public final class TargetSelector {
 
         if (candidateTarget != best) {
             candidateTarget = best;
-            candidateTicks = Math.max(1, elapsed);
+            candidateTicks = 0;
         } else {
             candidateTicks = TargetLockPolicy.advanceConfirmation(
                     true, true, candidateTicks, elapsed);
@@ -182,6 +182,11 @@ public final class TargetSelector {
         UUID uuid = playerEntity.getUUID();
         if (uuid == null || (uuid.getMostSignificantBits() == 0L && uuid.getLeastSignificantBits() == 0L)) {
             return false;
+        }
+        for (Player other : playerEntity.level().players()) {
+            if (other != playerEntity && uuid.equals(other.getUUID())) {
+                return false;
+            }
         }
         if (info.getProfile() == null || info.getProfile().getId() == null
                 || !uuid.equals(info.getProfile().getId())) {
