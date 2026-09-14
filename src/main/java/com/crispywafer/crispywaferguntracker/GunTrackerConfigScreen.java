@@ -565,6 +565,7 @@ public final class GunTrackerConfigScreen extends Screen {
             case BALLISTICS -> 16;
             case KEYS -> 5;
             case HUD -> 9;
+            case WEAPON -> 5;
         };
     }
 
