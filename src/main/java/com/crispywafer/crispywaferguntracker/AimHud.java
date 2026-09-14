@@ -22,7 +22,7 @@ public final class AimHud {
         if (!Config.SHOW_HUD.get() && !Config.SHOW_FOV_RING.get() && !Config.SHOW_BALLISTICS_HUD.get()) return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || !AimHandler.isStrictSingleplayer(mc)) return;
+        if (mc.player == null) return;
 
         GuiGraphics graphics = event.getGuiGraphics();
         int width = mc.getWindow().getGuiScaledWidth();

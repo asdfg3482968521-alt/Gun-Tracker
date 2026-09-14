@@ -29,7 +29,7 @@ public final class Keybindings {
         openConfigKey = new KeyMapping(
                 "key.crispywaferguntrackermod.open_config",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_LEFT_ALT,
+                GLFW.GLFW_KEY_RIGHT_ALT,
                 "key.categories.crispywaferguntrackermod"
         );
         triggerKey1 = new KeyMapping(

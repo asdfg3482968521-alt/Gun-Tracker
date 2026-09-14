@@ -57,17 +57,6 @@ public final class AimHandler {
 
         AimActivationController.SlotInput[] slots = collectTriggerInputs();
 
-        if (!isStrictSingleplayer(mc)) {
-            if (anyClicked(slots)) {
-                player.displayClientMessage(
-                        Component.translatable("message.crispywaferguntrackermod.singleplayer_only"),
-                        true
-                );
-            }
-            resetAll();
-            return;
-        }
-
         if (!Config.MASTER_ENABLED.get()) {
             resetAll();
             return;
@@ -189,15 +178,6 @@ public final class AimHandler {
             returning = false;
             clearTarget();
         }
-    }
-
-    /**
-     * Hard safety boundary: integrated server must exist and only one player may be present.
-     * LAN worlds with a second player therefore disable the feature too.
-     */
-    static boolean isStrictSingleplayer(Minecraft mc) {
-        if (!mc.hasSingleplayerServer() || mc.getSingleplayerServer() == null) return false;
-        return mc.getSingleplayerServer().getPlayerList().getPlayerCount() <= 1;
     }
 
     private static void updateTarget(LocalPlayer player) {

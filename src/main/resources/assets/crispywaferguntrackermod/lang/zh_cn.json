@@ -84,7 +84,7 @@
   "crispywaferguntrackermod.unit.blocks_per_tick": "方块/刻",
   "crispywaferguntrackermod.unit.ticks": "刻",
 
-  "message.crispywaferguntrackermod.singleplayer_only": "此自瞄仅允许在纯单人存档中使用",
+  "message.crispywaferguntrackermod.singleplayer_only": "当前环境不可用",
   "message.crispywaferguntrackermod.aim_on": "自瞄：已激活",
   "message.crispywaferguntrackermod.aim_off": "自瞄：已关闭",
 
