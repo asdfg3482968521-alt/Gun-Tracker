@@ -6,6 +6,7 @@ public final class StableAimLogicTestMain {
         testCandidateConfirmation();
         testWrappedAngleFilter();
         testTurnCaps();
+        testStableTargetConfigContracts();
         System.out.println("StableAimLogic tests passed");
     }
 
@@ -44,6 +45,21 @@ public final class StableAimLogicTestMain {
                 1.0e-9, "wrapped turn uses short direction and cap");
         assertClose(-8.0D, AimViewMath.stepLinear(0.0D, -30.0D, 1.0D, 8.0D), 1.0e-9,
                 "pitch cap applies");
+    }
+
+    private static void testStableTargetConfigContracts() {
+        assertEquals(0, Config.STICKINESS_MIN, "stickiness min");
+        assertEquals(100, Config.STICKINESS_MAX, "stickiness max");
+        assertEquals(60, Config.SWITCH_CONFIRM_TICKS_MAX, "switch confirm max");
+        assertEquals(10, Config.CANDIDATE_SCAN_INTERVAL_MAX, "candidate scan max");
+        assertEquals(60, Config.INVISIBLE_TOLERANCE_TICKS_MAX, "invisible tolerance max");
+        assertClose(180.0D, Config.UNLOCK_FOV_MAX, 0.0D, "unlock fov max");
+        assertTrue(Config.TARGET_PLAYERS != null, "player target toggle exists");
+        assertTrue(Config.TARGET_HOSTILES != null, "hostile target toggle exists");
+        assertTrue(Config.TARGET_OTHERS != null, "other target toggle exists");
+        assertTrue(Config.ANTI_BOT_MODE != null, "anti-bot config exists");
+        assertTrue(Config.AntiBotMode.STANDARD != null, "standard anti-bot mode exists");
+        assertTrue(Config.AntiBotMode.STRICT != null, "strict anti-bot mode exists");
     }
 
     private static void assertTrue(boolean value, String message) {
